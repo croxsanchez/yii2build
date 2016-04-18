@@ -1,0 +1,5 @@
+
+crox@theros:/var/www/html/yii2build$ composer self-update
+Updating to version 40c14709f79f9d7ea35ac969cfbd7f41beb525bb.
+    Downloading: 100%         
+Use composer self-update --rollback to return to version 6d1ebba75e99b8c714112bc85e96591ee0fdf0b4
