@@ -47,7 +47,7 @@ class User extends ActiveRecord implements IdentityInterface
     public function behaviors(){
         return [
             'timestamp' => [
-                'class' => 'yii\behaviors\TimestampBehavior',
+                'class' => TimestampBehavior::className(),
                 'attributes' => [
                     ActiveRecord::EVENT_BEFORE_INSERT => ['created_at', 'updated_at'],
                     ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_at'],
@@ -68,24 +68,15 @@ class User extends ActiveRecord implements IdentityInterface
             [['role_id'],'in', 'range'=>array_keys($this->getRoleList())],
             ['user_type_id', 'default', 'value' => 10],
             [['user_type_id'],'in', 'range'=>array_keys($this->getUserTypeList())],
-            ['username',
-                ['username',
-                    ['username',
-                        ['username',
-                            'filter', 'filter' => 'trim'],
-                        'required'],
-                    'unique'],
-                'string', 'min' => 2, 'max' => 255
-            ],
-            ['email',
-                ['email',
-                    ['email',
-                        ['email',
-                            'filter', 'filter' => 'trim'],
-                        'required'],
-                    'email'],
-                'unique'
-            ],
+            ['username', 'required'],
+            ['username', 'unique'],
+            ['username', 'string', 'min' => 2, 'max' => 255],
+            ['username', 'filter', 'filter' => 'trim'], 
+            ['email', 'required'],
+            ['email', 'unique'],
+            ['email', 'email'],
+            ['email', 'filter', 'filter' => 'trim'], 
+               
         ];
     }
 

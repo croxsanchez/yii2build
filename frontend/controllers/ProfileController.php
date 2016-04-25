@@ -34,6 +34,44 @@ class ProfileController extends Controller
                 ],
             ],
             
+            'access2' => [
+                'class' => \yii\filters\AccessControl::className(),
+                'only' => ['index', 'view','create', 'update', 'delete'],
+                'rules' => [
+                    [
+                        'actions' => ['index', 'view','create', 'update', 'delete'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                        'matchCallback' => function ($rule, $action) {
+                            return PermissionHelpers::requireStatus('Active');
+                        }
+                    ],
+                ],
+            ],
+        
+        /* return [
+            'access' => [
+                'class' => \yii\filters\AccessControl::className(),
+                'only' => ['index', 'view','create', 'update', 'delete'],
+                'rules' => [
+                    [
+                        'actions' =>['create', 'update', 'delete'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+                'rules' => [
+                        [
+                            'actions' => ['index', 'view','create', 'update', 'delete'],
+                            'allow' => true,
+                            'roles' => ['@'],
+                            'matchCallback' => function ($rule, $action) {
+                                return PermissionHelpers::requireStatus('Active');
+                            }
+                        ],
+                ],
+            ],
+         */
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
@@ -141,6 +179,8 @@ class ProfileController extends Controller
             ]);
         }
          */
+        
+        PermissionHelpers::requireUpgradeTo('Paid');
         
         if($model = Profile::find()->where(['user_id' =>Yii::$app->user->identity->id])->one()) {
             if ($model->load(Yii::$app->request->post()) && $model->save()) {
