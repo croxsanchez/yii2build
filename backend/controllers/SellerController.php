@@ -3,17 +3,18 @@
 namespace backend\controllers;
 
 use Yii;
+use backend\models\Seller;
+use backend\models\SellerForm;
 use common\models\User;
-use backend\models\search\UserSearch;
+use backend\models\search\SellerSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-use common\models\PermissionHelpers;
 
 /**
- * UserController implements the CRUD actions for User model.
+ * SellerController implements the CRUD actions for Seller model.
  */
-class UserController extends Controller
+class SellerController extends Controller
 {
     /**
      * @inheritdoc
@@ -21,47 +22,22 @@ class UserController extends Controller
     public function behaviors()
     {
         return [
-            'access' => [
-                'class' => \yii\filters\AccessControl::className(),
-                'only' => ['index', 'view','create', 'update', 'delete'],
-                'rules' => 
-                [
-                    [
-                        'actions' => ['index', 'view',],
-                        'allow' => true,
-                        'roles' => ['@'],
-                        'matchCallback' => function ($rule, $action) {
-                            return PermissionHelpers::requireMinimumRole('Admin')
-                                    && PermissionHelpers::requireStatus('Active');
-                        }
-                    ],
-                    [
-                        'actions' => [ 'create','update', 'delete'],
-                        'allow' => true,
-                        'roles' => ['@'],
-                        'matchCallback' => function ($rule, $action) {
-                            return PermissionHelpers::requireMinimumRole('Admin')
-                                    && PermissionHelpers::requireStatus('Active');
-                        }
-                    ],
-                ],
-            ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
-                    'delete' => ['post'],
+                    'delete' => ['POST'],
                 ],
             ],
         ];
     }
 
     /**
-     * Lists all User models.
+     * Lists all Seller models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new UserSearch();
+        $searchModel = new SellerSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -69,39 +45,67 @@ class UserController extends Controller
             'dataProvider' => $dataProvider,
         ]);
     }
-
-    /**
-     * Displays a single User model.
-     * @param integer $id
-     * @return mixed
-     */
-    public function actionView($id)
+    
+    public function actionIndice()
     {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
+        $searchModel = new SellerSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('indice', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
         ]);
     }
 
     /**
-     * Creates a new User model.
+     * Displays a single Seller model.
+     * @param integer $user_id
+     * @return mixed
+     */
+    public function actionView($user_id)
+    {
+        return $this->render('view', [
+            'model' => $this->findModel($user_id),
+        ]);
+    }
+
+    /**
+     * Creates a new Seller model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new User();
+        $model = new SellerForm();
+        
+        if ($model->load(Yii::$app->request->post())) {
+            if ($user = $model->create()) {
+                return $this->redirect(['view', 'user_id' => $user->getId()]);
+            }
+        }
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        return $this->render('create', [
+            'model' => $model,
+        ]);
+
+        /*$model = new Seller();
+        $user = new User();
+
+        if ($user->load(Yii::$app->request->post()) && $user->save()) {
+            $model->user_id = $user->id;
+            $model->parent_id = Yii::$app->user->id;
+            $model->save();
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('create', [
                 'model' => $model,
+                'user' => $user,
             ]);
-        }
+        }*/
     }
 
     /**
-     * Updates an existing User model.
+     * Updates an existing Seller model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -120,7 +124,7 @@ class UserController extends Controller
     }
 
     /**
-     * Deletes an existing User model.
+     * Deletes an existing Seller model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -133,15 +137,15 @@ class UserController extends Controller
     }
 
     /**
-     * Finds the User model based on its primary key value.
+     * Finds the Seller model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return User the loaded model
+     * @return Seller the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = User::findOne($id)) !== null) {
+        if (($model = Seller::findOne(['user_id' => $id])) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');

@@ -35,7 +35,7 @@ FontAwesomeAsset::register($this);
 
 <div class="wrap">
     <?php
-    $is_admin = ValueHelpers::getRoleValue('Admin');
+    $is_admin = ValueHelpers::getRoleValue('Seller');
     
     if (!Yii::$app->user->isGuest){
         NavBar::begin([
@@ -63,6 +63,8 @@ FontAwesomeAsset::register($this);
     if (!Yii::$app->user->isGuest && Yii::$app->user->identity->role_id >= $is_admin) {
         $menuItems[] = ['label' => 'Users', 'url' => ['user/index']];
         $menuItems[] = ['label' => 'Profiles', 'url' => ['profile/index']];
+        $menuItems[] = ['label' => 'Customers', 'url' => ['customers/index']];
+        $menuItems[] = ['label' => 'Sellers', 'url' => ['seller/index']];
         $menuItems[] = ['label' => 'Roles', 'url' => ['/role/index']];
         $menuItems[] = ['label' => 'User Types', 'url' => ['/user-type/index']];
         $menuItems[] = ['label' => 'Statuses', 'url' => ['/status/index']];

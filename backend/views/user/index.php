@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use yii\grid\GridView;
 use \yii\bootstrap\Collapse;
+use common\models\PermissionHelpers;
 
 /* @var $this yii\web\View */
 /* @var $searchModel backend\models\search\UserSearch */
@@ -27,7 +28,15 @@ echo Collapse::widget([
         ]
     ]);
 ?>
-    
+<?php
+if (PermissionHelpers::requireMinimumRole('Admin') && PermissionHelpers::requireStatus('Active')){
+?>
+<p>
+<?= Html::a('Create User', ['create'], ['class' => 'btn btn-success']) ?>
+</p>
+<?php
+}
+?>
 <?= GridView::widget([
     'dataProvider' => $dataProvider,
     'filterModel' => $searchModel,

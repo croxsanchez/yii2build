@@ -89,7 +89,7 @@ class User extends ActiveRecord implements IdentityInterface
             'profileId' => Yii::t('app', 'Profile'),
             'profileLink' => Yii::t('app', 'Profile'),
             'userLink' => Yii::t('app', 'User'),
-            'username' => Yii::t('app', 'User'),
+            'username' => Yii::t('app', 'User Name'),
             'userTypeName' => Yii::t('app', 'User Type'),
             'userTypeId' => Yii::t('app', 'User Type'),
             'userIdLink' => Yii::t('app', 'ID'),

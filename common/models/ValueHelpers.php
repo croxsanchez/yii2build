@@ -59,4 +59,22 @@ class ValueHelpers {
         $result = $command->queryOne();
         return $result['user_type_value'];
     }
+    
+    /**
+    * returns value of customer_type_name so that you can
+    * used in PermissionHelpers methods
+    * handed in as string, example: 'Natural'
+    *
+    * @param mixed $customer_type_name
+    */
+    public static function getCustomerTypeValue($customer_type_name){
+        $connection = \Yii::$app->db;
+        $sql = "SELECT customer_type_value FROM customer_type
+        WHERE customer_type_name=:customer_type_name";
+        $command = $connection->createCommand($sql);
+        $command->bindValue(":customer_type_name", $customer_type_name);
+        $result = $command->queryOne();
+        return $result['customer_type_value'];
+    }
+    
 }

@@ -6,15 +6,16 @@ use common\models\ValueHelpers;
 /**
 * @var yii\web\View $this
 */
-$this->title = 'Admin Yii 2 Build';
+$this->title = 'Admin BcauseNet.com';
 $is_admin = ValueHelpers::getRoleValue('Admin');
 
 ?>
 <div class="site-index">
     <div class="jumbotron">
+        <h2>BcauseNet.com</h2>
         <h1>Welcome to Admin!</h1>
         <p class="lead">
-            Now you can manage users, roles, and more with
+            Manage users, roles, and more with
             our easy tools.
         </p>
         <p>
@@ -47,7 +48,7 @@ if (!Yii::$app->user->isGuest && Yii::$app->user->identity->role_id >= $is_admin
                 <h2>Roles</h2>
                 <p>
                     This is where you manage Roles.
-                    You can decide who is admin and who is not. You can
+                    You can decide who is admin, vendor, designer, regular user and who is not. You can
                     add a new role if you like, just click the link below to get started.
                 </p>
                 <p>
