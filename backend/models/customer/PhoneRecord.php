@@ -18,4 +18,12 @@ class PhoneRecord extends ActiveRecord
             [['customer_id', 'number'], 'required'],
         ];
     }
+    
+    public function getFullPhone()
+    {
+        return implode(', ',
+        array_filter(
+        $this->getAttributes(
+                ['number'])));
+    }
 }

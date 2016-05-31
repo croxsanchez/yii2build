@@ -1,15 +1,9 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Hijarian
- * Date: 03.08.14
- * Time: 12:55
- */
 
-namespace app\utilities;
+namespace backend\utilities;
 
-use app\assets\AuditColumnAssetsBundle;
-use app\models\user\UserRecord;
+use backend\assets\AuditColumnAssetsBundle;
+use common\models\User;
 use yii\base\Model;
 use yii\grid\DataColumn;
 use yii\helpers\Html;
@@ -77,19 +71,19 @@ class AuditColumn extends DataColumn
         return [
             [
                 $model->getAttributeLabel('created_at'),
-                date('d.m.Y', $model->created_at)
+                date($model->created_at)
             ],
             [
                 $model->getAttributeLabel('created_by'),
-                UserRecord::findOne($model->created_by)->username
+                User::findOne($model->created_by)->username
             ],
             [
                 $model->getAttributeLabel('updated_at'),
-                date('d.m.Y', $model->updated_at)
+                date($model->updated_at)
             ],
             [
                 $model->getAttributeLabel('updated_by'),
-                UserRecord::findOne($model->updated_by)->username
+                User::findOne($model->updated_by)->username
             ]
         ];
     }

@@ -15,7 +15,6 @@ use yii\helpers\Html;
  * @property integer $user_id
  * @property integer $parent_id
  *
- * @property User $user
  */
 class Seller extends ActiveRecord
 {
@@ -33,8 +32,8 @@ class Seller extends ActiveRecord
     public function rules()
     {
         return [
-            [['user_id', 'parent_id'], 'required'],
-            [['user_id', 'parent_id'], 'integer'],
+            [['id','user_id', 'parent_id'], 'required'],
+            [['id','user_id', 'parent_id'], 'integer'],
             [['user_id'], 'unique'],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_id' => 'id']],
         ];
@@ -46,10 +45,28 @@ class Seller extends ActiveRecord
     public function attributeLabels()
     {
         return [
-            'userIdLink' => 'ID',
+            'idLink' => 'ID',
             'userLink' => 'User ID',
             'parentUserLink' => 'Parent ID',
         ];
+    }
+    
+    /**
+    * @getId
+    */
+    public function getId(){
+        return $this->getPrimaryKey();
+    }
+    
+    /**
+    * @getIdLink
+    * get seller id Link
+    *
+    */
+    public function getIdLink(){
+        $url = Url::to(['seller/view', 'id'=>$this->id]);
+        $options = [];
+        return Html::a($this->id, $url, $options);
     }
 
     /**
@@ -61,7 +78,7 @@ class Seller extends ActiveRecord
     }
     
     /**
-    * get user name
+    * @getUsername
     *
     */
     public function getUsername(){
@@ -77,19 +94,11 @@ class Seller extends ActiveRecord
     }
     
     /**
-    * get parent username
-    *
-    */
-    public function getParentUsername(){
-        return $this->parentUser ? $this->parentUser->username : '- no parent -';
-    }
-    
-    /**
-    * get user id Link
+    * @getUserIdLink
     *
     */
     public function getUserIdLink(){
-        $url = Url::to(['user/update', 'id'=>$this->id]);
+        $url = Url::to(['user/update', 'id'=>$this->user_id]);
         $options = [];
         return Html::a($this->id, $url, $options);
     }
@@ -99,13 +108,21 @@ class Seller extends ActiveRecord
     *
     */
     public function getUserLink(){
-        $url = Url::to(['user/view', 'id'=>$this->id]);
+        $url = Url::to(['user/view', 'id'=>$this->user_id]);
         $options = [];
         return Html::a($this->username, $url, $options);
     }
     
     /**
-    * @getUserLink
+    * @getParentUsername
+    *
+    */
+    public function getParentUsername(){
+        return $this->parentUser ? $this->parentUser->username : '- no parent -';
+    }
+    
+    /**
+    * @getParentUserLink
     *
     */
     public function getParentUserLink(){

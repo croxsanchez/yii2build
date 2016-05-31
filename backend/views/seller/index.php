@@ -32,7 +32,7 @@ if (PermissionHelpers::requireMinimumRole('Seller') && PermissionHelpers::requir
         'columns' => [
             // 'id',
             ['class' => 'yii\grid\SerialColumn'],
-            ['attribute'=>'userIdLink', 'format'=>'raw'],
+            ['attribute'=>'idLink', 'format'=>'raw'],
             ['attribute'=>'userLink', 'format'=>'raw'],
             ['attribute'=>'parentUserLink', 'format'=>'raw'],
 

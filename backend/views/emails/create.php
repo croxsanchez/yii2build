@@ -4,7 +4,7 @@ use yii\helpers\Html;
 
 
 /* @var $this yii\web\View */
-/* @var $model app\models\customer\EmailRecord */
+/* @var $model backend\models\customer\EmailRecord */
 
 $this->title = 'Create Email Record';
 $this->params['breadcrumbs'][] = ['label' => 'Email Records', 'url' => ['index']];

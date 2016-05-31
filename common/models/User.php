@@ -140,7 +140,6 @@ class User extends ActiveRecord implements IdentityInterface
     }
     
     /**
-    41Chapter Four: Modifying the User Model
     * @getId
     */
     public function getId(){

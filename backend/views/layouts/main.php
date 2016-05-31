@@ -63,7 +63,7 @@ FontAwesomeAsset::register($this);
     if (!Yii::$app->user->isGuest && Yii::$app->user->identity->role_id >= $is_admin) {
         $menuItems[] = ['label' => 'Users', 'url' => ['user/index']];
         $menuItems[] = ['label' => 'Profiles', 'url' => ['profile/index']];
-        $menuItems[] = ['label' => 'Customers', 'url' => ['customers/index']];
+        $menuItems[] = ['label' => 'Customers', 'url' => ['customer-records/index']];
         $menuItems[] = ['label' => 'Sellers', 'url' => ['seller/index']];
         $menuItems[] = ['label' => 'Roles', 'url' => ['/role/index']];
         $menuItems[] = ['label' => 'User Types', 'url' => ['/user-type/index']];

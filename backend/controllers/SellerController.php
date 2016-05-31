@@ -30,6 +30,16 @@ class SellerController extends Controller
             ],
         ];
     }
+    
+    public function actionParams()
+    {
+        $model = new SellerSearch();
+        return $this->render('view',
+                [
+                    'params' => Yii::$app->request->queryParams,
+                    'model' => $model,
+                ]);
+    }
 
     /**
      * Lists all Seller models.
@@ -62,10 +72,10 @@ class SellerController extends Controller
      * @param integer $user_id
      * @return mixed
      */
-    public function actionView($user_id)
+    public function actionView($id)
     {
         return $this->render('view', [
-            'model' => $this->findModel($user_id),
+            'model' => $this->findModel($id),
         ]);
     }
 
@@ -79,8 +89,8 @@ class SellerController extends Controller
         $model = new SellerForm();
         
         if ($model->load(Yii::$app->request->post())) {
-            if ($user = $model->create()) {
-                return $this->redirect(['view', 'user_id' => $user->getId()]);
+            if ($seller = $model->create()) {
+                return $this->redirect(['view', 'id' => $seller->getId()]);
             }
         }
 
@@ -145,7 +155,7 @@ class SellerController extends Controller
      */
     protected function findModel($id)
     {
-        if (($model = Seller::findOne(['user_id' => $id])) !== null) {
+        if (($model = Seller::findOne(['id' => $id])) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');

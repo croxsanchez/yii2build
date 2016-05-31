@@ -110,16 +110,16 @@ if (!Yii::$app->user->isGuest && Yii::$app->user->identity->role_id >= $is_admin
                 </p>
             </div>
             <div class="col-lg-4">
-                <h2>Placeholder</h2>
+                <h2>Sellers</h2>
                 <p>
-                    Need to review Profiles? This is the place to get it done.
+                    Need to review Sellers? This is the place to get it done.
                     These are easy to manage via UI. Just click the link below
                     to manage profiles.
                 </p>
                 <p>
 <?php
-if (!Yii::$app->user->isGuest && Yii::$app->user->identity->role_id >= $is_admin) {
-    echo Html::a('Manage Profiles', ['profile/index'],
+if (!Yii::$app->user->isGuest && Yii::$app->user->identity->role_id >= ValueHelpers::getRoleValue('Seller')) {
+    echo Html::a('Manage Sellers', ['seller/index'],
             ['class' => 'btn btn-default']);
 }
 ?>

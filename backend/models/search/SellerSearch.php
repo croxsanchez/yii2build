@@ -41,11 +41,11 @@ class SellerSearch extends Seller
      */
     public function search($params)
     {
-        //$query = Seller::find();
-        $query = (new Query())
-        ->select(['user.id AS userIdLink', 'user.username AS userLink', '(SELECT username FROM user where seller.parent_id = user.id) AS parentUserLink'])
-        ->from('user')
-        ->leftJoin('seller', 'seller.user_id = user.id');
+        $query = Seller::find();
+        //$query = (new Query())
+        //->select(['user.id AS userIdLink', 'user.username AS userLink', '(SELECT username FROM user where seller.parent_id = user.id) AS parentUserLink'])
+        //->from('user')
+        //->leftJoin('seller', 'seller.user_id = user.id');
 //        ->where($condition);
 
         // add conditions that should always apply here

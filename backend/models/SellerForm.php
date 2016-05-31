@@ -65,8 +65,9 @@ class SellerForm extends Model
             $seller = new Seller();
             $seller->user_id = $user->id;
             $seller->parent_id = Yii::$app->user->id;
-            $seller->save();
-            return $user;
+            if ($seller->save()){
+                return $seller;
+            }
         } 
         
         return  null;
