@@ -1,7 +1,8 @@
 <?php
-namespace common\models;
+namespace backend\models;
 
 use Yii;
+use common\models\User;
 use yii\base\NotSupportedException;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
@@ -33,10 +34,12 @@ use yii\helpers\Html;
 * @property string $password write-only password
 */
 
-class User extends ActiveRecord implements IdentityInterface
+class Users extends ActiveRecord implements IdentityInterface
 {
     const STATUS_ACTIVE = 10;
     
+    public $password;
+
     public static function tableName() {
         return 'user';
     }
@@ -77,6 +80,9 @@ class User extends ActiveRecord implements IdentityInterface
             ['email', 'email'],
             ['email', 'filter', 'filter' => 'trim'], 
             
+            ['password', 'required'],
+            ['password', 'string', 'min' => 6],
+               
         ];
     }
 
@@ -93,7 +99,24 @@ class User extends ActiveRecord implements IdentityInterface
             'userTypeName' => Yii::t('app', 'User Type'),
             'userTypeId' => Yii::t('app', 'User Type'),
             'userIdLink' => Yii::t('app', 'ID'),
+            'password' => Yii::t('app', 'Password'),
         ];
+    }
+    
+    /**
+     * Signs user up.
+     *
+     * @return User|null the saved model or null if saving fails
+     */
+    public function addUser()
+    {
+        $user = new User();
+        $user->username = $this->username;
+        $user->email = $this->email;
+        $user->setPassword($this->password);
+        $user->generateAuthKey();
+
+        return $user;
     }
 
     /**

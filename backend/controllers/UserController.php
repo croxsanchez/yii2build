@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use Yii;
 use common\models\User;
+use backend\models\Users;
 use backend\models\search\UserSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -89,10 +90,18 @@ class UserController extends Controller
      */
     public function actionCreate()
     {
-        $model = new User();
+        $model = new Users();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        if ($model->load(Yii::$app->request->post())) {
+            /*if ($user = $model->addUser()) {
+            return $this->render('salida', [
+                'model' => $user,
+            ]);*/
+            if ($user = $model->addUser()){
+                if ($user->save()){
+                    return $this->redirect(['view', 'id' => $user->id]);
+                }
+            }
         } else {
             return $this->render('create', [
                 'model' => $model,
