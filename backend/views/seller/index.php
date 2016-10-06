@@ -1,5 +1,5 @@
-<?php
 
+<?php
 use yii\helpers\Html;
 use yii\grid\GridView;
 use \yii\bootstrap\Collapse;
@@ -16,7 +16,19 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="seller-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
+<?php 
+echo Collapse::widget([
+    'items' => [
+            // equivalent to the above
+            [
+                'label' => 'Search',
+                'content' => $this->render('_search', ['model' => $searchModel]) ,
+                // open its content by default
+                //'contentOptions' => ['class' => 'in']
+            ],
+        ]
+    ]);
+?>
 <?php
 if (PermissionHelpers::requireMinimumRole('Seller') && PermissionHelpers::requireStatus('Active')){
 ?>
@@ -26,20 +38,24 @@ if (PermissionHelpers::requireMinimumRole('Seller') && PermissionHelpers::requir
 <?php
 }
 ?>
-    <?= GridView::widget([
-        'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
-        'columns' => [
-            // 'id',
-            ['class' => 'yii\grid\SerialColumn'],
-            ['attribute'=>'idLink', 'format'=>'raw'],
-            ['attribute'=>'userLink', 'format'=>'raw'],
-            ['attribute'=>'parentUserLink', 'format'=>'raw'],
+<?= GridView::widget([
+    'dataProvider' => $dataProvider,
+    'filterModel' => $searchModel,
+    'columns' => [
+        ['class' => 'yii\grid\SerialColumn'],
+        //'id',
+        ['attribute'=>'idLink', 'format'=>'raw'],
+        ['attribute'=>'userLink', 'format'=>'raw'],
+        ['attribute'=>'parentUserLink', 'format'=>'raw'],
+        'rankName',
+        ['attribute'=>'rank_date', 'format'=>'raw'],
+        ['attribute'=>'total_points', 'format'=>'raw'],
+        ['attribute'=>'credits', 'format'=>'raw'],
 
-            //'username',
-            //'parentUsername',
+        //'username',
+        //'parentUsername',
 
-            ['class' => 'yii\grid\ActionColumn'],
-        ],
-    ]); ?>
+        ['class' => 'yii\grid\ActionColumn'],
+    ],
+]); ?>
 </div>

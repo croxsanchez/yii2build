@@ -2,7 +2,7 @@
 
 namespace backend\models;
 
-use common\models\user;
+use common\models\User;
 use backend\models\Seller;
 use yii\base\Model;
 use Yii;
@@ -18,6 +18,14 @@ class SellerForm extends Model
     public $role_id;
     public $user_type_id;
     public $status_id;
+    public $user_id;
+    public $parent_id;
+    public $rank_value;
+    public $rank_date;
+    public $total_points;
+    public $credits;
+    
+    protected $user;
 
     /**
      * @inheritdoc
@@ -38,8 +46,16 @@ class SellerForm extends Model
 
             ['password', 'required'],
             ['password', 'string', 'min' => 6],
+            ['role_id', 'default', 'value' => 20],
+            ['user_type_id', 'default', 'value' => 10],
             [['role_id', 'user_type_id', 'status_id'], 'safe'],
         ];
+    }
+    
+    public function __construct($config = []) {
+        $this->user = new User();
+        
+        parent::__construct($config);
     }
 
     /**
@@ -49,27 +65,33 @@ class SellerForm extends Model
      */
     public function create()
     {
-        if (!$this->validate()) {
-            return null;
+        if ($this->validate()) {
+            $user = new User();
+            $user->username = $this->username;
+            $user->email = $this->email;
+            $user->setPassword($this->password);
+            $user->generateAuthKey();
+            $user->role_id = $this->role_id;
+            $user->user_type_id = $this->user_type_id;
+            $user->status_id = $this->status_id;
+            if ($user->save()){
+                $seller = new Seller();
+                $seller->user_id = $user->id;
+                $seller->parent_id = Yii::$app->user->id;
+                $seller->rank_date= $user->getCreatedAt();
+                if ($seller->save()){
+                    return $seller;
+                }
+            }
         }
         
-        $user = new User();
-        $user->username = $this->username;
-        $user->email = $this->email;
-        $user->setPassword($this->password);
-        $user->generateAuthKey();
-        $user->role_id = $this->role_id;
-        $user->user_type_id = $this->user_type_id;
-        $user->status_id = $this->status_id;
-        if ($user->save()){
-            $seller = new Seller();
-            $seller->user_id = $user->id;
-            $seller->parent_id = Yii::$app->user->id;
-            if ($seller->save()){
-                return $seller;
-            }
-        } 
+         
         
         return  null;
+    }
+    
+    public function isNewRecord()
+    {
+        return $this->user->isNewRecord;
     }
 }

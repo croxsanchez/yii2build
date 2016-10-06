@@ -16,8 +16,16 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'parent_id')->textInput() ?>
 
+    <?= $form->field($model, 'total_points')->textInput() ?>
+
+    <?= $form->field($model, 'rank_value')->textInput() ?>
+
+    <?= $form->field($model, 'rank_date')->textInput() ?>
+
+    <?= $form->field($model, 'credits')->textInput() ?>
+
     <div class="form-group">
-        <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+        <?= Html::submitButton($model->isNewRecord() ? 'Create' : 'Update', ['class' => $model->isNewRecord() ? 'btn btn-success' : 'btn btn-primary']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>

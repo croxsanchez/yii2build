@@ -324,4 +324,12 @@ class User extends ActiveRecord implements IdentityInterface
         $options = [];
         return Html::a($this->username, $url, $options);
     }
+    
+    /**
+    * @getCreatedAt
+    *
+    */
+    public function getCreatedAt(){
+        return $this->created_at;
+    }
 }

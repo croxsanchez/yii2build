@@ -8,7 +8,9 @@ use common\models\ValueHelpers;
 */
 $this->title = 'Admin BcauseNet.com';
 $is_admin = ValueHelpers::getRoleValue('Admin');
+$is_seller = ValueHelpers::getRoleValue('Seller');
 
+if (!Yii::$app->user->isGuest && Yii::$app->user->identity->role_id >=$is_admin) {
 ?>
 <div class="site-index">
     <div class="jumbotron">
@@ -20,10 +22,29 @@ $is_admin = ValueHelpers::getRoleValue('Admin');
         </p>
         <p>
 <?php
+} elseif (!Yii::$app->user->isGuest && Yii::$app->user->identity->role_id >=$is_seller) {
+?>
+<div class="site-index">
+    <div class="jumbotron">
+        <h2>BcauseNet.com</h2>
+        <h1>Welcome to Your Organization!</h1>
+        <p class="lead">
+            Manage customers, domains and your whole organization with
+            our easy tools.
+        </p>
+        <p>
+
+<?php
+}
+
+
 if (!Yii::$app->user->isGuest && Yii::$app->user->identity->role_id >=$is_admin) {
     echo Html::a('Manage Users', ['user/index'],
             ['class' => 'btn btn-lg btn-success']);
 }
+?>
+<?php
+if (!Yii::$app->user->isGuest && Yii::$app->user->identity->role_id >= $is_admin) {
 ?>
         </p>
     </div>
@@ -37,10 +58,12 @@ if (!Yii::$app->user->isGuest && Yii::$app->user->identity->role_id >=$is_admin)
                 </p>
                 <p>
 <?php
-if (!Yii::$app->user->isGuest && Yii::$app->user->identity->role_id >= $is_admin) {
     echo Html::a('Manage Users', ['user/index'],
             ['class' => 'btn btn-default']);
 }
+?>
+<?php
+if (!Yii::$app->user->isGuest && Yii::$app->user->identity->role_id >= $is_admin) {
 ?>
                 </p>
             </div>
@@ -53,11 +76,13 @@ if (!Yii::$app->user->isGuest && Yii::$app->user->identity->role_id >= $is_admin
                 </p>
                 <p>
 <?php
-if (!Yii::$app->user->isGuest && Yii::$app->user->identity->role_id >= $is_admin) {
     echo Html::a('Manage Roles', ['role/index'],
             ['class' => 'btn btn-default']);
 }
 ?>
+<?php
+if (!Yii::$app->user->isGuest && Yii::$app->user->identity->role_id >= $is_admin) {
+?>                    
                 </p>
             </div>
             <div class="col-lg-4">
@@ -68,11 +93,13 @@ if (!Yii::$app->user->isGuest && Yii::$app->user->identity->role_id >= $is_admin
                 </p>
                 <p>
 <?php
-if (!Yii::$app->user->isGuest && Yii::$app->user->identity->role_id >= $is_admin) {
     echo Html::a('Manage Profiles', ['profile/index'],
             ['class' => 'btn btn-default']);
 }
 ?>
+<?php
+if (!Yii::$app->user->isGuest && Yii::$app->user->identity->role_id >= $is_admin) {
+?>                    
                 </p>
             </div>
         </div>
@@ -86,12 +113,13 @@ if (!Yii::$app->user->isGuest && Yii::$app->user->identity->role_id >= $is_admin
                 </p>
                 <p>
 <?php
-if (!Yii::$app->user->isGuest && Yii::$app->user->identity->role_id >= $is_admin) {
     echo Html::a('Manage User Types', ['user-type/index'],
             ['class' => 'btn btn-default']);
 }
 ?>
-                </p>
+<?php
+if (!Yii::$app->user->isGuest && Yii::$app->user->identity->role_id >= $is_admin) {
+?>                </p>
             </div>
             <div class="col-lg-4">
                 <h2>Statuses</h2>
@@ -102,12 +130,13 @@ if (!Yii::$app->user->isGuest && Yii::$app->user->identity->role_id >= $is_admin
                 </p>
                 <p>
 <?php
-if (!Yii::$app->user->isGuest && Yii::$app->user->identity->role_id >= $is_admin) {
     echo Html::a('Manage Statuses', ['status/index'],
             ['class' => 'btn btn-default']);
 }
 ?>
-                </p>
+<?php
+if (!Yii::$app->user->isGuest && Yii::$app->user->identity->role_id >= $is_admin) {
+?>                </p>
             </div>
             <div class="col-lg-4">
                 <h2>Sellers</h2>
@@ -118,7 +147,6 @@ if (!Yii::$app->user->isGuest && Yii::$app->user->identity->role_id >= $is_admin
                 </p>
                 <p>
 <?php
-if (!Yii::$app->user->isGuest && Yii::$app->user->identity->role_id >= ValueHelpers::getRoleValue('Seller')) {
     echo Html::a('Manage Sellers', ['seller/index'],
             ['class' => 'btn btn-default']);
 }

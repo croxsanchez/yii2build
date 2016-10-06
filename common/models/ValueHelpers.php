@@ -77,4 +77,17 @@ class ValueHelpers {
         return $result['customer_type_value'];
     }
     
+    /**
+    * return the value of a rank name handed in as string
+    * example: 'Agente'
+    * @param mixed $rank_name
+    */
+    public static function getRankValue($rank_name){
+        $connection = \Yii::$app->db;
+        $sql = "SELECT value FROM rank WHERE name=:rank_name";
+        $command = $connection->createCommand($sql);
+        $command->bindValue(":rank_name", $rank_name);
+        $result = $command->queryOne();
+        return $result['value'];
+    }
 }

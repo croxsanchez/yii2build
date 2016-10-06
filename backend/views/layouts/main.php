@@ -35,7 +35,8 @@ FontAwesomeAsset::register($this);
 
 <div class="wrap">
     <?php
-    $is_admin = ValueHelpers::getRoleValue('Seller');
+    $is_admin = ValueHelpers::getRoleValue('Admin');
+    $is_seller = ValueHelpers::getRoleValue('Seller');
     
     if (!Yii::$app->user->isGuest){
         NavBar::begin([
@@ -55,9 +56,11 @@ FontAwesomeAsset::register($this);
         ]);
     }
 
-    $menuItems = [
-        ['label' => 'Home', 'url' => ['/site/index']],
-    ];
+    if (!Yii::$app->user->isGuest && Yii::$app->user->identity->role_id >= $is_seller) {
+        $menuItems = [
+            ['label' => 'Home', 'url' => ['/site/index']],
+        ];
+    }
 
 
     if (!Yii::$app->user->isGuest && Yii::$app->user->identity->role_id >= $is_admin) {
@@ -68,6 +71,10 @@ FontAwesomeAsset::register($this);
         $menuItems[] = ['label' => 'Roles', 'url' => ['/role/index']];
         $menuItems[] = ['label' => 'User Types', 'url' => ['/user-type/index']];
         $menuItems[] = ['label' => 'Statuses', 'url' => ['/status/index']];
+    } elseif(!Yii::$app->user->isGuest && Yii::$app->user->identity->role_id == $is_seller) {
+        $menuItems[] = ['label' => 'Profile', 'url' => ['profile/index']];
+        $menuItems[] = ['label' => 'Customers', 'url' => ['customer-records/index']];
+        $menuItems[] = ['label' => 'Sellers', 'url' => ['seller/index']];
     } 
 
     if (Yii::$app->user->isGuest) {

@@ -5,12 +5,12 @@ namespace backend\models\search;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use backend\models\Seller;
+use backend\models\Payment;
 
 /**
- * SellerSearch represents the model behind the search form about `backend\models\Seller`.
+ * PaymentSearch represents the model behind the search form about `backend\models\Payment`.
  */
-class SellerSearch extends Seller
+class PaymentSearch extends Payment
 {
     /**
      * @inheritdoc
@@ -18,8 +18,9 @@ class SellerSearch extends Seller
     public function rules()
     {
         return [
-            [['id', 'user_id', 'parent_id', 'total_points', 'rank_value', 'credits'], 'integer'],
-            [['rank_date'], 'safe'],
+            [['id', 'payment_method_value', 'invoice_id', 'domain_id'], 'integer'],
+            [['ref_number', 'date'], 'safe'],
+            [['amount'], 'number'],
         ];
     }
 
@@ -41,7 +42,7 @@ class SellerSearch extends Seller
      */
     public function search($params)
     {
-        $query = Seller::find();
+        $query = Payment::find();
 
         // add conditions that should always apply here
 
@@ -60,13 +61,14 @@ class SellerSearch extends Seller
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'user_id' => $this->user_id,
-            'parent_id' => $this->parent_id,
-            'total_points' => $this->total_points,
-            'rank_value' => $this->rank_value,
-            'rank_date' => $this->rank_date,
-            'credits' => $this->credits,
+            'amount' => $this->amount,
+            'date' => $this->date,
+            'payment_method_value' => $this->payment_method_value,
+            'invoice_id' => $this->invoice_id,
+            'domain_id' => $this->domain_id,
         ]);
+
+        $query->andFilterWhere(['like', 'ref_number', $this->ref_number]);
 
         return $dataProvider;
     }

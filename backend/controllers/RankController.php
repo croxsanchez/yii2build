@@ -3,18 +3,16 @@
 namespace backend\controllers;
 
 use Yii;
-use backend\models\Seller;
-use backend\models\search\SellerSearch;
+use backend\models\Rank;
+use backend\models\search\RankSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-use backend\models\SellerForm;
-use common\models\User;
 
 /**
- * SellerController implements the CRUD actions for Seller model.
+ * RankController implements the CRUD actions for Rank model.
  */
-class SellerController extends Controller
+class RankController extends Controller
 {
     /**
      * @inheritdoc
@@ -31,23 +29,13 @@ class SellerController extends Controller
         ];
     }
 
-    public function actionParams()
-    {
-        $model = new SellerSearch();
-        return $this->render('view',
-                [
-                    'params' => Yii::$app->request->queryParams,
-                    'model' => $model,
-                ]);
-    }
-    
     /**
-     * Lists all Seller models.
+     * Lists all Rank models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new SellerSearch();
+        $searchModel = new RankSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -57,7 +45,7 @@ class SellerController extends Controller
     }
 
     /**
-     * Displays a single Seller model.
+     * Displays a single Rank model.
      * @param integer $id
      * @return mixed
      */
@@ -69,23 +57,13 @@ class SellerController extends Controller
     }
 
     /**
-     * Creates a new Seller model.
+     * Creates a new Rank model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new SellerForm();
-        
-        if ($model->load(Yii::$app->request->post())) {
-            if ($seller = $model->create()) {
-                return $this->redirect(['view', 'id' => $seller->getId()]);
-            }
-        }
-        return $this->render('create', [
-            'model' => $model,
-        ]);
-        /*$model = new Seller();
+        $model = new Rank();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -93,11 +71,11 @@ class SellerController extends Controller
             return $this->render('create', [
                 'model' => $model,
             ]);
-        }*/
+        }
     }
 
     /**
-     * Updates an existing Seller model.
+     * Updates an existing Rank model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -116,7 +94,7 @@ class SellerController extends Controller
     }
 
     /**
-     * Deletes an existing Seller model.
+     * Deletes an existing Rank model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -129,15 +107,15 @@ class SellerController extends Controller
     }
 
     /**
-     * Finds the Seller model based on its primary key value.
+     * Finds the Rank model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return Seller the loaded model
+     * @return Rank the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Seller::findOne(['id' => $id])) !== null) {
+        if (($model = Rank::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');

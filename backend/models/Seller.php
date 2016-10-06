@@ -14,9 +14,15 @@ use yii\helpers\Html;
  * @property integer $id
  * @property integer $user_id
  * @property integer $parent_id
+ * @property integer $total_points
+ * @property integer $rank_value
+ * @property string $rank_date
+ * @property integer $credits
  *
+ * @property Points[] $points
+ * @property User $user
  */
-class Seller extends ActiveRecord
+class Seller extends \yii\db\ActiveRecord
 {
     /**
      * @inheritdoc
@@ -32,8 +38,9 @@ class Seller extends ActiveRecord
     public function rules()
     {
         return [
-            [['id','user_id', 'parent_id'], 'required'],
-            [['id','user_id', 'parent_id'], 'integer'],
+            [['user_id', 'parent_id', 'rank_date'], 'required'],
+            [['user_id', 'parent_id', 'total_points', 'rank_value', 'credits'], 'integer'],
+            [['rank_date'], 'safe'],
             [['user_id'], 'unique'],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_id' => 'id']],
         ];
@@ -45,12 +52,24 @@ class Seller extends ActiveRecord
     public function attributeLabels()
     {
         return [
-            'idLink' => 'ID',
-            'userLink' => 'User ID',
-            'parentUserLink' => 'Parent ID',
+            'idLink' => Yii::t('app', 'ID'),
+            'userLink' => Yii::t('app', 'User ID'),
+            'parentUserLink' => Yii::t('app', 'Parent ID'),
+            'total_points' => Yii::t('app', 'Total Points'),
+            'rankName' => Yii::t('app', 'Rank'),
+            'rankDate' => Yii::t('app', 'Rank Date'),
+            'credits' => Yii::t('app', 'Credits'),
         ];
     }
-    
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getPoints()
+    {
+        return $this->hasMany(Points::className(), ['seller_id' => 'id']);
+    }
+
     /**
     * @getId
     */
@@ -68,7 +87,7 @@ class Seller extends ActiveRecord
         $options = [];
         return Html::a($this->id, $url, $options);
     }
-
+    
     /**
      * @return \yii\db\ActiveQuery
      */
@@ -129,5 +148,30 @@ class Seller extends ActiveRecord
         $url = Url::to(['user/view', 'id'=>$this->parent_id]);
         $options = [];
         return Html::a($this->parentUsername, $url, $options);
+    }
+    
+    /**
+    * getRank
+    * line break to avoid word wrap in PDF
+    * code as single line in your IDE
+    */
+    public function getRank(){
+        return $this->hasOne(Rank::className(), ['value' =>'rank_value']);
+    }
+    
+    /**
+    * get user type name
+    *
+    */
+    public function getRankName(){
+        return $this->rank ? $this->rank->name : '- no rank -';
+    }
+    
+    /**
+    * get list of user types for dropdown
+    */
+    public static function getRankList(){
+        $droptions = Rank::find()->asArray()->all();
+        return Arrayhelper::map($droptions, 'value', 'name');
     }
 }

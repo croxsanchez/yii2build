@@ -3,14 +3,11 @@
 use yii\helpers\Html;
 use yii\web\View;
 use yii\widgets\ActiveForm;
-
-
 /* Create Seller UI
  * @var $this yii\web\View
  * @var $model backend\models\Seller
  * @var $user common\models\User
  */
-
 $this->title = 'Create Seller';
 $this->params['breadcrumbs'][] = ['label' => 'Sellers', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;

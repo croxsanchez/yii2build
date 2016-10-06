@@ -4,11 +4,11 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $model backend\models\search\SellerSearch */
+/* @var $model backend\models\search\RankSearch */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
-<div class="seller-search">
+<div class="rank-search">
 
     <?php $form = ActiveForm::begin([
         'action' => ['index'],
@@ -17,17 +17,9 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'id') ?>
 
-    <?= $form->field($model, 'user_id') ?>
+    <?= $form->field($model, 'value') ?>
 
-    <?= $form->field($model, 'parent_id') ?>
-
-    <?= $form->field($model, 'total_points') ?>
-
-    <?= $form->field($model, 'rank_value') ?>
-
-    <?php // echo $form->field($model, 'rank_date') ?>
-
-    <?php // echo $form->field($model, 'credits') ?>
+    <?= $form->field($model, 'name') ?>
 
     <div class="form-group">
         <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>
