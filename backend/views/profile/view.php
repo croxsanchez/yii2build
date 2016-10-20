@@ -4,29 +4,29 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 use common\models\PermissionHelpers;
 
-/**
-* @var yii\web\View $this
-* @var frontend\models\Profile $model
-*/
+/* @var $this yii\web\View */
+/* @var $model backend\models\Profile */
 
-$this->title = $model->user->username;
-
-$show_this_nav = PermissionHelpers::requireMinimumRole('SuperUser');
-
+$this->title = $model->id;
 $this->params['breadcrumbs'][] = ['label' => 'Profiles', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
+
+$show_this_for_admin = PermissionHelpers::requireMinimumRole('SuperUser');
+$show_this_for_seller = PermissionHelpers::requireRole('Seller');
 ?>
 <div class="profile-view">
-    <h1>Profile: <?= Html::encode($this->title) ?></h1>
+
+    <h1><?= Html::encode($this->title) ?></h1>
+
     <p>
-        <?php if (!Yii::$app->user->isGuest && $show_this_nav) {
+        <?php if (!Yii::$app->user->isGuest && ($show_this_for_admin || $show_this_for_seller)) {
                     echo Html::a('Update', ['update', 'id' => $model->id],
                             [
                                 'class' => 'btn btn-primary'
                             ]);
             }?>
         
-        <?php if (!Yii::$app->user->isGuest && $show_this_nav) {
+        <?php if (!Yii::$app->user->isGuest && $show_this_for_admin) {
                     echo Html::a('Delete', ['delete', 'id' => $model->id], 
                             [
                                 'class' => 'btn btn-danger',
@@ -37,17 +37,35 @@ $this->params['breadcrumbs'][] = $this->title;
                             ]);
                 }?>
     </p>
-                <?= DetailView::widget([
-                    'model' => $model,
-                    'attributes' => [
-                        ['attribute'=>'userLink', 'format'=>'raw'],
-                        'first_name',
-                        'last_name',
-                        'birthdate',
-                        'gender.gender_name',
-                        'created_at',
-                        'updated_at',
-                        'id',
-                    ],
-                ])?>
+<?php
+    if ($model->avatar == ""){
+        echo \cebe\gravatar\Gravatar::widget([
+            'email' => common\models\User::find()->where(['id'=>Yii::$app->user->getId()])->one()->email,
+            'options' => [
+                'class'=>'profile-image',
+                'alt' => common\models\User::find()->where(['id'=>Yii::$app->user->getId()])->one()->username,
+                ],
+            'size' => 128,
+            ]);
+    } else {
+        $r = str_replace("/web", "", Yii::$app->params['uploadUrl']);
+        echo Html::img($r . $model->avatar, ['class' => 'img-thumbnail img-responsive', 'width' => 192]);        
+    }
+ ?>
+    <?= DetailView::widget([
+        'model' => $model,
+        'attributes' => [
+            ['attribute'=>'userLink', 'format'=>'raw'],
+            'id',
+            'first_name:ntext',
+            'last_name',
+            'birthdate',
+            'gender.gender_name',
+            'created_at',
+            'updated_at',
+            'filename',
+            'avatar',
+        ],
+    ]) ?>
+
 </div>

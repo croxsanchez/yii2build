@@ -24,11 +24,14 @@ class CustomerRecord extends ActiveRecord
     {
         return [
             ['id', 'number'],
-            ['name', 'required'],
+            [['name', 'customer_type_id'], 'required'],
+            ['customer_type_id', 'integer'],
             ['name', 'string', 'max' => 256],
+            [['birth_date'], 'safe'],
             ['birth_date', 'date', 'format' => 'Y-m-d'],
-            ['notes', 'safe'],
-            ['customer_type_id', 'number']
+            [['notes', 'online_store', 'social_media'], 'safe'],
+            [['customer_type_id'], 'exist', 'skipOnError' => true, 'targetClass' => CustomerType::className(), 'targetAttribute' => ['customer_type_id' => 'customer_type_value']],
+            [['customer_type_id'],'in', 'range'=>array_keys($this->getCustomerTypeList())]
         ];
     }
     
@@ -40,7 +43,9 @@ class CustomerRecord extends ActiveRecord
             'name' => Yii::t('app', 'Full Name'),
             'birth_date' => Yii::t('app', 'Birth Date'),
             'notes' => Yii::t('app', 'Notes'),
-            'customer_type_id' => Yii::t('app', 'Customer Type'),
+            'customerTypeName' => Yii::t('app', 'Customer Type'),
+            'online_store' => Yii::t('app', 'Online Store'),
+            'social_media' => Yii::t('app', 'Social Media'),
         ];
     }
 

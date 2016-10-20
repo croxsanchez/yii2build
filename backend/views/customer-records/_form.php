@@ -2,7 +2,8 @@
 
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
-
+//use yii\jui\DatePicker;
+use kartik\date\DatePicker
 /* @var $this yii\web\View */
 /* @var $model backend\models\customer\CustomerRecord */
 /* @var $form yii\widgets\ActiveForm */
@@ -14,11 +15,27 @@ use yii\bootstrap\ActiveForm;
 
     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'birth_date')->textInput() ?>
+    <?= //$form->field($model, 'birth_date')->widget(DatePicker::className(), 
+        //    ['clientOptions' => ['dateFormat' => 'yy-mm-dd']]); 
+        $form->field($model, 'birth_date')->widget(DatePicker::className(),
+                [
+                    'name' => 'birth_date', 
+                    'value' => date('Y-m-d'),
+                    'options' => ['placeholder' => 'Select your birth date ...'],
+                    'pluginOptions' => [
+                        'format' => 'yyyy-mm-dd',
+                        'todayHighlight' => true
+                    ]
+                ]);    ?>
 
     <?= $form->field($model, 'notes')->textarea(['rows' => 6]) ?>
-
-    <?= $form->field($model, 'customer_type_id')->textInput() ?>
+    
+    <?= $form->field($model, 'customer_type_id')->dropDownList($model->customerTypeList, 
+            ['prompt' => 'Please choose one' ]); ?>
+    
+    <?= $form->field($model, 'online_store')->checkbox(); ?>
+    
+    <?= $form->field($model, 'social_media')->checkbox(); ?>
     
     <?php if (!$model->isNewRecord):?>
     <!-- subtables will be here... -->

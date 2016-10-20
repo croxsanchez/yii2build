@@ -4,7 +4,7 @@ use yii\helpers\Html;
 
 
 /* @var $this yii\web\View */
-/* @var $model frontend\models\Profile */
+/* @var $model backend\models\Profile */
 
 $this->title = 'Create Profile';
 $this->params['breadcrumbs'][] = ['label' => 'Profiles', 'url' => ['index']];

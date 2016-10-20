@@ -16,7 +16,7 @@ class ProfileSearch extends Profile
     {
         return [
             [['id', 'gender_id'], 'integer'],
-            [['first_name', 'last_name', 'birthdate', 'genderName','userId'], 'safe'],
+            [['first_name', 'last_name', 'birthdate', 'genderName','userId', 'filename', 'avatar'], 'safe'],
         ];
     }
 

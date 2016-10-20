@@ -2,7 +2,7 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-use frontend\models\Profile;
+use backend\models\Profile;
 
 /**
 * @var yii\web\View $this
@@ -26,19 +26,19 @@ use frontend\models\Profile;
 <?= $form->field($model, 'gender_id')->dropDownList(Profile::getgenderList(),
         [ 'prompt' => 'Please Choose One' ]);?>
     
-<?php // echo $form->field($model, 'created_at') ?>
-    
-<?php // echo $form->field($model, 'updated_at') ?>
-    
-<?php // echo $form->field($model, 'user_id') ?>
-    
+    <?php // echo $form->field($model, 'created_at') ?>
+
+    <?php // echo $form->field($model, 'updated_at') ?>
+
+    <?php // echo $form->field($model, 'filename') ?>
+
+    <?php // echo $form->field($model, 'avatar') ?>
+
     <div class="form-group">
-
-<?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>
-
-<?= Html::resetButton('Reset', ['class' => 'btn btn-default']) ?>
+        <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>
+        <?= Html::resetButton('Reset', ['class' => 'btn btn-default']) ?>
     </div>
-    
-<?php ActiveForm::end(); ?>
+
+    <?php ActiveForm::end(); ?>
 
 </div>
