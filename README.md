@@ -1,2 +1,2 @@
 # yii2build
-Práctica de montar aplicación avanzada con Yii2
+Ejemplo de aplicación avanzada con Yii2
