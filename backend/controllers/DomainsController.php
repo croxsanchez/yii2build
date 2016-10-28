@@ -4,7 +4,7 @@ namespace backend\controllers;
 
 use Yii;
 use backend\models\customer\DomainRecord;
-use yii\data\ActiveDataProvider;
+use backend\models\customer\DomainRecordSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -35,11 +35,12 @@ class DomainsController extends Controller
      */
     public function actionIndex()
     {
-        $dataProvider = new ActiveDataProvider([
-            'query' => DomainRecord::find(),
-        ]);
+        $searchModel = new DomainRecordSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
 
         return $this->render('index', [
+            'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
     }
@@ -61,15 +62,17 @@ class DomainsController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate()
+    public function actionCreate($customer_id)
     {
         $model = new DomainRecord();
-
+        
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            //return $this->redirect(['view', 'id' => $model->id]);
+            return $this->goBack();
         } else {
             return $this->render('create', [
                 'model' => $model,
+                'customer_id' => $customer_id
             ]);
         }
     }

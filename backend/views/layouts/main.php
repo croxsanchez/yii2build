@@ -37,10 +37,15 @@ FontAwesomeAsset::register($this);
     <?php
     $is_admin = ValueHelpers::getRoleValue('Admin');
     $is_seller = ValueHelpers::getRoleValue('Seller');
-    
+
     if (!Yii::$app->user->isGuest){
+        if (!Yii::$app->user->identity->role_id >= $is_seller){
+            $title = 'BcauseNet <i class="fa fa-plug"></i> Admin';
+        } else {
+            $title = 'BcauseNet <i class="fa fa-plug"></i> Your Business';
+        }
         NavBar::begin([
-            'brandLabel' => 'BcauseNet <i class="fa fa-plug"></i> Admin',
+            'brandLabel' => $title,
             'brandUrl' => Yii::$app->homeUrl,
             'options' => [
                 'class' => 'navbar-inverse navbar-fixed-top',
@@ -73,9 +78,91 @@ FontAwesomeAsset::register($this);
         $menuItems[] = ['label' => 'Statuses', 'url' => ['/status/index']];
     } elseif(!Yii::$app->user->isGuest && Yii::$app->user->identity->role_id == $is_seller) {
         $menuItems[] = ['label' => 'Profile', 'url' => ['profile/index']];
-        $menuItems[] = ['label' => 'Customers', 'url' => ['customer-records/index']];
-        $menuItems[] = ['label' => 'Sellers', 'url' => ['seller/index']];
-    } 
+        $menuItems[] = [
+            'label' => 'Customers',
+            'items' => [
+                [
+                    'label' => 'Create New Customer',
+                    'url' => [
+                        'customer-records/create',
+                        'tag' => 'list'
+                    ]
+                ],
+                [
+                    'label' => 'My Customers',
+                    'url' => [
+                        'customer-records/index',
+                        'tag' => 'list'
+                    ]
+                ],
+            ]
+        ];
+        $menuItems[] = [
+            'label' => 'Site Manager',
+            'items' => [
+                    [
+                    'label' => 'Developing',
+                    'items' => [
+                            [
+                                'label' => 'Pending for Payment',
+                                'url' => [
+                                    'customer-records/customers-pending-payment',
+                                    'seller_id' => Yii::$app->user->id,
+                                    'tag' => 'pending'
+                                ]
+                            ],
+                            [
+                                'label' => 'Modify Site',
+                                'url' => [
+                                    'customer-records/index',
+                                    'seller_id' => Yii::$app->user->id,
+                                    'tag' => 'paid'
+                                ]
+                            ],
+                    ]
+                ],
+                [
+                    'label' => 'Published',
+                    'items' => [
+                            [
+                                'label' => 'Already Paid Out',
+                                'url' => [
+                                    'customer-records/customers-paid-out',
+                                    'seller_id' => Yii::$app->user->id,
+                                    'tag' => 'paid'
+                                ]
+                            ],
+                    ]
+                ],
+            ]
+        ];
+        $menuItems[] = [
+            'label' => 'My Organization',
+            'items' => [
+                [
+                    'label' => 'Create New Seller',
+                    'url' => [
+                        'seller/create',
+                        'tag' => 'create'
+                    ]
+                ],
+                [
+                    'label' => 'Members',
+                    'url' => [
+                        'seller/index',
+                        'tag' => 'list'
+                    ]
+                ],
+                [
+                    'label' => 'Statistics',
+                    'url' => [
+                        'seller/index',
+                        'tag' => 'statistics'
+                    ]
+                ],
+            ]
+        ];
+    }
 
     if (Yii::$app->user->isGuest) {
         $menuItems[] = ['label' => 'Login', 'url' => ['/site/login']];

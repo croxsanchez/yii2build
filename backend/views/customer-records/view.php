@@ -23,6 +23,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'method' => 'post',
             ],
         ]) ?>
+        <?= Html::a('View Customers', ['index'], ['class' => 'btn btn-primary']) ?>
     </p>
 
     <?= DetailView::widget([

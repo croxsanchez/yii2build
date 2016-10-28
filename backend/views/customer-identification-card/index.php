@@ -4,27 +4,30 @@ use yii\helpers\Html;
 use yii\grid\GridView;
 
 /* @var $this yii\web\View */
+/* @var $searchModel backend\models\customer\CustomerIdentificationCardSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Identification Card Records';
+$this->title = 'Customer Identification Cards';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="identification-card-record-index">
+<div class="customer-identification-card-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
+    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <p>
-        <?= Html::a('Create Identification Card Record', ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Create Customer Identification Card', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
+        'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
             'id',
             'number',
             'customer_id',
-            'identification_card_type_value',
+            'identification_card_initial_id',
 
             ['class' => 'yii\grid\ActionColumn'],
         ],

@@ -4,13 +4,13 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
-/* @var $model backend\models\customer\IdentificationCardInitialRecord */
+/* @var $model backend\models\IdentificationCardInitial */
 
 $this->title = $model->id;
-$this->params['breadcrumbs'][] = ['label' => 'Identification Card Initial Records', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'Identification Card Initials', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="identification-card-initial-record-view">
+<div class="identification-card-initial-view">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
@@ -29,9 +29,8 @@ $this->params['breadcrumbs'][] = $this->title;
         'model' => $model,
         'attributes' => [
             'id',
-            'value',
             'initial',
-            'identification_card_type_value',
+            'identification_card_type_id',
         ],
     ]) ?>
 

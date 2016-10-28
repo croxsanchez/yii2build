@@ -4,13 +4,13 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
-/* @var $model backend\models\customer\IdentificationCardTypeRecord */
+/* @var $model backend\models\PaymentMethod */
 
-$this->title = $model->name;
-$this->params['breadcrumbs'][] = ['label' => 'Identification Card Type Records', 'url' => ['index']];
+$this->title = $model->id;
+$this->params['breadcrumbs'][] = ['label' => 'Payment Methods', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="identification-card-type-record-view">
+<div class="payment-method-view">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
@@ -30,7 +30,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'attributes' => [
             'id',
             'value',
-            'name',
+            'type',
         ],
     ]) ?>
 

@@ -4,15 +4,13 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $model backend\models\customer\IdentificationCardTypeRecord */
+/* @var $model backend\models\IdentificationCardType */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
-<div class="identification-card-type-record-form">
+<div class="identification-card-type-form">
 
     <?php $form = ActiveForm::begin(); ?>
-
-    <?= $form->field($model, 'value')->textInput() ?>
 
     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 

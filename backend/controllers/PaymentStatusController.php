@@ -3,16 +3,16 @@
 namespace backend\controllers;
 
 use Yii;
-use backend\models\customer\IdentificationCardRecord;
-use yii\data\ActiveDataProvider;
+use backend\models\PaymentStatus;
+use backend\models\search\PaymentStatusSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * IdentificationCardsController implements the CRUD actions for IdentificationCardRecord model.
+ * PaymentStatusController implements the CRUD actions for PaymentStatus model.
  */
-class IdentificationCardsController extends Controller
+class PaymentStatusController extends Controller
 {
     /**
      * @inheritdoc
@@ -30,22 +30,22 @@ class IdentificationCardsController extends Controller
     }
 
     /**
-     * Lists all IdentificationCardRecord models.
+     * Lists all PaymentStatus models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $dataProvider = new ActiveDataProvider([
-            'query' => IdentificationCardRecord::find(),
-        ]);
+        $searchModel = new PaymentStatusSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
+            'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
     }
 
     /**
-     * Displays a single IdentificationCardRecord model.
+     * Displays a single PaymentStatus model.
      * @param integer $id
      * @return mixed
      */
@@ -57,13 +57,13 @@ class IdentificationCardsController extends Controller
     }
 
     /**
-     * Creates a new IdentificationCardRecord model.
+     * Creates a new PaymentStatus model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new IdentificationCardRecord();
+        $model = new PaymentStatus();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -75,7 +75,7 @@ class IdentificationCardsController extends Controller
     }
 
     /**
-     * Updates an existing IdentificationCardRecord model.
+     * Updates an existing PaymentStatus model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -94,7 +94,7 @@ class IdentificationCardsController extends Controller
     }
 
     /**
-     * Deletes an existing IdentificationCardRecord model.
+     * Deletes an existing PaymentStatus model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -107,15 +107,15 @@ class IdentificationCardsController extends Controller
     }
 
     /**
-     * Finds the IdentificationCardRecord model based on its primary key value.
+     * Finds the PaymentStatus model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return IdentificationCardRecord the loaded model
+     * @return PaymentStatus the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = IdentificationCardRecord::findOne($id)) !== null) {
+        if (($model = PaymentStatus::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');

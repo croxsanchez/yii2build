@@ -3,14 +3,14 @@
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
-/* @var $model backend\models\customer\IdentificationCardInitialRecord */
+/* @var $model backend\models\IdentificationCardInitial */
 
-$this->title = 'Update Identification Card Initial Record: ' . $model->id;
-$this->params['breadcrumbs'][] = ['label' => 'Identification Card Initial Records', 'url' => ['index']];
+$this->title = 'Update Identification Card Initial: ' . $model->id;
+$this->params['breadcrumbs'][] = ['label' => 'Identification Card Initials', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->id, 'url' => ['view', 'id' => $model->id]];
 $this->params['breadcrumbs'][] = 'Update';
 ?>
-<div class="identification-card-initial-record-update">
+<div class="identification-card-initial-update">
 
     <h1><?= Html::encode($this->title) ?></h1>
 

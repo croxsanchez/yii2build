@@ -13,6 +13,11 @@ use Yii;
 class SellerForm extends Model
 {
     public $username;
+    public $first_name;
+    public $last_name;
+    public $ident_card_id;
+    public $ident_card_init_id;
+    public $ident_card_number;
     public $email;
     public $password;
     public $role_id;
@@ -24,7 +29,7 @@ class SellerForm extends Model
     public $rank_date;
     public $total_points;
     public $credits;
-    
+
     protected $user;
 
     /**
@@ -46,15 +51,16 @@ class SellerForm extends Model
 
             ['password', 'required'],
             ['password', 'string', 'min' => 6],
+            [['ident_card_id', 'ident_card_init_id', 'ident_card_number'], 'required'],
             ['role_id', 'default', 'value' => 20],
             ['user_type_id', 'default', 'value' => 10],
             [['role_id', 'user_type_id', 'status_id'], 'safe'],
         ];
     }
-    
+
     public function __construct($config = []) {
         $this->user = new User();
-        
+
         parent::__construct($config);
     }
 
@@ -84,12 +90,12 @@ class SellerForm extends Model
                 }
             }
         }
-        
-         
-        
+
+
+
         return  null;
     }
-    
+
     public function isNewRecord()
     {
         return $this->user->isNewRecord;

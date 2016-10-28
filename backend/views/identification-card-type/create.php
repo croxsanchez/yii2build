@@ -4,13 +4,13 @@ use yii\helpers\Html;
 
 
 /* @var $this yii\web\View */
-/* @var $model backend\models\customer\IdentificationCardTypeRecord */
+/* @var $model backend\models\IdentificationCardType */
 
-$this->title = 'Create Identification Card Type Record';
-$this->params['breadcrumbs'][] = ['label' => 'Identification Card Type Records', 'url' => ['index']];
+$this->title = 'Create Identification Card Type';
+$this->params['breadcrumbs'][] = ['label' => 'Identification Card Types', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="identification-card-type-record-create">
+<div class="identification-card-type-create">
 
     <h1><?= Html::encode($this->title) ?></h1>
 

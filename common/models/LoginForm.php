@@ -82,6 +82,7 @@ class LoginForm extends Model
             ValueHelpers::getRoleValue('Seller') 
             && $this->getUser()->status_id ==
             ValueHelpers::getStatusValue('Active')) {
+            
             return Yii::$app->user->login($this->getUser(),
                     $this->rememberMe ? 3600 * 24 * 30 : 0);
         } else {

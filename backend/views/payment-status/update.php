@@ -3,14 +3,14 @@
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
-/* @var $model backend\models\customer\IdentificationCardTypeRecord */
+/* @var $model backend\models\PaymentStatus */
 
-$this->title = 'Update Identification Card Type Record: ' . $model->name;
-$this->params['breadcrumbs'][] = ['label' => 'Identification Card Type Records', 'url' => ['index']];
+$this->title = 'Update Payment Status: ' . $model->name;
+$this->params['breadcrumbs'][] = ['label' => 'Payment Statuses', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->name, 'url' => ['view', 'id' => $model->id]];
 $this->params['breadcrumbs'][] = 'Update';
 ?>
-<div class="identification-card-type-record-update">
+<div class="payment-status-update">
 
     <h1><?= Html::encode($this->title) ?></h1>
 

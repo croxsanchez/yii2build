@@ -1,6 +1,6 @@
 <?php
 
-namespace backend\models\customer;
+namespace backend\models;
 
 use Yii;
 
@@ -8,10 +8,11 @@ use Yii;
  * This is the model class for table "identification_card_type".
  *
  * @property integer $id
- * @property integer $value
  * @property string $name
+ *
+ * @property IdentificationCardInitial[] $identificationCardInitials
  */
-class IdentificationCardTypeRecord extends \yii\db\ActiveRecord
+class IdentificationCardType extends \yii\db\ActiveRecord
 {
     /**
      * @inheritdoc
@@ -27,7 +28,6 @@ class IdentificationCardTypeRecord extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['value'], 'integer'],
             [['name'], 'required'],
             [['name'], 'string', 'max' => 255],
         ];
@@ -40,8 +40,15 @@ class IdentificationCardTypeRecord extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'value' => 'Value',
             'name' => 'Name',
         ];
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getIdentificationCardInitials()
+    {
+        return $this->hasMany(IdentificationCardInitial::className(), ['identification_card_type_id' => 'id']);
     }
 }

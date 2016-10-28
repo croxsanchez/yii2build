@@ -30,6 +30,10 @@ class ProfileController extends Controller
                         'actions' => ['index', 'view','create', 'update', 'delete'],
                         'allow' => true,
                         'roles' => ['@'],
+                        'matchCallback' => function ($rule, $action) {
+                            return PermissionHelpers::requireMinimumRole('Seller') 
+                                    && PermissionHelpers::requireStatus('Active');
+                        }
                     ],
                 ],
             ],

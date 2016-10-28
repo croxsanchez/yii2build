@@ -17,7 +17,7 @@ class UserSearch extends User
     *
     * @var mixed
     */
-    
+
     public $roleName;
     public $userType;
     public $user_type_name;
@@ -32,7 +32,7 @@ class UserSearch extends User
     {
         return [
             [['id', 'role_id', 'user_type_id', 'status_id'], 'integer'],
-            [['username', 'email', 'created_at', 'updated_at','roleName', 'statusName', 
+            [['username', 'email', 'created_at', 'updated_at','roleName', 'statusName',
                  'userTypeName', 'profileId', 'user_type_name'], 'safe'],
         ];
     }
@@ -62,7 +62,7 @@ class UserSearch extends User
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
-        
+
         /**
         * Setup your sorting attributes
         * Note: This is setup before the $this->load($params)
@@ -113,18 +113,18 @@ class UserSearch extends User
                 ],
             ]
         ]);
-        
-        
+
+
         if (!($this->load($params) && $this->validate())) {
-            
+
             $query->joinWith(['role'])
                     ->joinWith(['status'])
                     ->joinWith(['profile'])
                     ->joinWith(['userType']);
-            
+
             return $dataProvider;
         }
-        
+
         $this->addSearchParameter($query, 'user.id');
         $this->addSearchParameter($query, 'username', true);
         $this->addSearchParameter($query, 'email', true);
@@ -133,12 +133,12 @@ class UserSearch extends User
         $this->addSearchParameter($query, 'user_type_id');
         $this->addSearchParameter($query, 'created_at');
         $this->addSearchParameter($query, 'updated_at');
-        
+
         // filter by role
         $query->joinWith(['role' => function ($q) {
             $q->where('role.role_name LIKE "%' . $this->roleName . '%"');
         }])
-        
+
         // filter by status
         ->joinWith(['status' => function ($q) {
             $q->where('status.status_name LIKE "%' . $this->statusName . '%"');
@@ -148,10 +148,10 @@ class UserSearch extends User
         ->joinWith(['userType' => function ($q) {
             $q->where('user_type.user_type_name LIKE "%' . $this->userTypeName . '%"');
         }]);
-        
+
         return $dataProvider;
     }
-    
+
     protected function addSearchParameter($query, $attribute, $partialMatch = false)
     {
         if (($pos = strrpos($attribute, '.')) !== false) {
@@ -159,9 +159,9 @@ class UserSearch extends User
         } else {
             $modelAttribute = $attribute;
         }
-        
+
         $value = $this->$modelAttribute;
-        
+
         if (trim($value) === '') {
             return;
         }

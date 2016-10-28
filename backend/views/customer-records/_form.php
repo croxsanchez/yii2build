@@ -114,6 +114,30 @@ use kartik\date\DatePicker
         ],
     ]);?>
     
+    <h2>Domains</h2>
+    <?= \yii\grid\GridView::widget([
+        'dataProvider' => new \yii\data\ActiveDataProvider(
+                [
+                    'query' => $model->getDomains(), 
+                    'pagination' => false
+                ]
+        ),
+        'columns' => [
+            'name',
+            'domain_choice_value',
+            'payment_status_value',
+            'theme_id',
+            [
+                'class' => \yii\grid\ActionColumn::className(),
+                'controller' => 'domains',
+                'template' => '{update}{delete}',
+                'header' => Html::a(
+                        '<i class="glyphicon glyphicon-plus"></i>&nbsp;Add New',
+                        ['domains/create', 'customer_id' => $model->id]
+                ),
+            ],
+        ],
+    ]);?>
     <?php endif?>
 
     <div class="form-group">

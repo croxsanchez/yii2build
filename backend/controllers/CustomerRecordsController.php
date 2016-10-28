@@ -8,6 +8,10 @@ use backend\models\customer\CustomerRecordSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use common\models\PermissionHelpers;
+use common\models\RecordHelpers;
+use yii\db\Query;
+use yii\data\ActiveDataProvider;
 
 /**
  * CustomerRecordsController implements the CRUD actions for CustomerRecord model.
@@ -35,13 +39,88 @@ class CustomerRecordsController extends Controller
      */
     public function actionIndex()
     {
-        $searchModel = new CustomerRecordSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        if (PermissionHelpers::requireMinimumRole('Admin')
+                && PermissionHelpers::requireStatus('Active')){
+            $searchModel = new CustomerRecordSearch();
+            $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
-        return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-        ]);
+            return $this->render('index', [
+                'searchModel' => $searchModel,
+                'dataProvider' => $dataProvider,
+            ]);
+        } elseif (PermissionHelpers::requireRole('Seller')
+                    && PermissionHelpers::requireStatus('Active')){
+            return $this->redirect([
+                'my-customers',
+                'seller_id' => Yii::$app->user->id,
+            ]);
+
+        }
+    }
+
+    /**
+     * Displays the list of customers for the current seller.
+     * @return mixed
+     */
+    public function actionMyCustomers($seller_id)
+    {
+        if (!Yii::$app->user->isGuest &&
+            PermissionHelpers::requireRole('Seller')
+                    && PermissionHelpers::requireStatus('Active')){
+            $searchModel = new CustomerRecordSearch();
+            $dataProvider = $searchModel->searchMyCustomers(Yii::$app->request->queryParams);
+
+            return $this->render('my-customers', [
+                    'searchModel'  => $searchModel,
+                    'dataProvider' => $dataProvider,
+                ]);
+        } else {
+            throw new NotFoundHttpException('You\'re not allowed to enter this site.');
+        }
+    }
+
+    /**
+     * Displays the list of customers with domains pending for payment
+     * for the current seller.
+     */
+    public function actionCustomersPendingPayment($seller_id)
+    {
+        if (!Yii::$app->user->isGuest &&
+            PermissionHelpers::requireRole('Seller')
+                    && PermissionHelpers::requireStatus('Active')){
+            $searchModel = new CustomerRecordSearch();
+            $dataProvider = $searchModel->searchMyPendingForPayment(Yii::$app->request->queryParams);
+
+            return $this->render('pending-for-payment', [
+                    'searchModel'  => $searchModel,
+                    'dataProvider' => $dataProvider,
+                ]);
+
+        } else {
+            throw new NotFoundHttpException('You\'re not allowed to enter this view.');
+        }
+    }
+
+    /**
+     * Displays the list of customers with domains already paid out
+     * for the current seller.
+     */
+    public function actionCustomersPaidOut($seller_id)
+    {
+        if (!Yii::$app->user->isGuest &&
+            PermissionHelpers::requireRole('Seller')
+                    && PermissionHelpers::requireStatus('Active')){
+            $searchModel = new CustomerRecordSearch();
+            $dataProvider = $searchModel->searchMyPaidOutCustomers(Yii::$app->request->queryParams);
+
+            return $this->render('paid-out', [
+                    'searchModel'  => $searchModel,
+                    'dataProvider' => $dataProvider,
+                ]);
+
+        } else {
+            throw new NotFoundHttpException('You\'re not allowed to enter this view.');
+        }
     }
 
     /**
@@ -63,17 +142,24 @@ class CustomerRecordsController extends Controller
      */
     public function actionCreate()
     {
-        $this->storeReturnUrl();
-        $model = new CustomerRecord();
+        if (!Yii::$app->user->isGuest &&
+            PermissionHelpers::requireMinimumRole('Seller')
+                    && PermissionHelpers::requireStatus('Active')){
+            $this->storeReturnUrl();
+            $model = new CustomerRecord();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            //return $this->redirect(['view', 'id' => $model->id]);
-            return $this->redirect(['update', 'id' => $model->id]);
+            if ($model->load(Yii::$app->request->post()) && $model->save()) {
+                //return $this->redirect(['view', 'id' => $model->id]);
+                return $this->redirect(['update', 'id' => $model->id]);
+            } else {
+                return $this->render('create', [
+                    'model' => $model,
+                ]);
+            }
         } else {
-            return $this->render('create', [
-                'model' => $model,
-            ]);
+            throw new NotFoundHttpException('You\'re not allowed to perform this action.');
         }
+
     }
 
     /**
@@ -124,7 +210,7 @@ class CustomerRecordsController extends Controller
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
-    
+
     private function storeReturnUrl()
     {
         Yii::$app->user->returnUrl = Yii::$app->request->url;

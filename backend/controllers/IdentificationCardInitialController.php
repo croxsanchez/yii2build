@@ -3,14 +3,14 @@
 namespace backend\controllers;
 
 use Yii;
-use backend\models\customer\IdentificationCardInitialRecord;
-use yii\data\ActiveDataProvider;
+use backend\models\IdentificationCardInitial;
+use backend\models\search\IdentificationCardInitialSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * IdentificationCardInitialController implements the CRUD actions for IdentificationCardInitialRecord model.
+ * IdentificationCardInitialController implements the CRUD actions for IdentificationCardInitial model.
  */
 class IdentificationCardInitialController extends Controller
 {
@@ -30,22 +30,22 @@ class IdentificationCardInitialController extends Controller
     }
 
     /**
-     * Lists all IdentificationCardInitialRecord models.
+     * Lists all IdentificationCardInitial models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $dataProvider = new ActiveDataProvider([
-            'query' => IdentificationCardInitialRecord::find(),
-        ]);
+        $searchModel = new IdentificationCardInitialSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
+            'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
     }
 
     /**
-     * Displays a single IdentificationCardInitialRecord model.
+     * Displays a single IdentificationCardInitial model.
      * @param integer $id
      * @return mixed
      */
@@ -57,13 +57,13 @@ class IdentificationCardInitialController extends Controller
     }
 
     /**
-     * Creates a new IdentificationCardInitialRecord model.
+     * Creates a new IdentificationCardInitial model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new IdentificationCardInitialRecord();
+        $model = new IdentificationCardInitial();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -75,7 +75,7 @@ class IdentificationCardInitialController extends Controller
     }
 
     /**
-     * Updates an existing IdentificationCardInitialRecord model.
+     * Updates an existing IdentificationCardInitial model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -94,7 +94,7 @@ class IdentificationCardInitialController extends Controller
     }
 
     /**
-     * Deletes an existing IdentificationCardInitialRecord model.
+     * Deletes an existing IdentificationCardInitial model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -107,15 +107,15 @@ class IdentificationCardInitialController extends Controller
     }
 
     /**
-     * Finds the IdentificationCardInitialRecord model based on its primary key value.
+     * Finds the IdentificationCardInitial model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return IdentificationCardInitialRecord the loaded model
+     * @return IdentificationCardInitial the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = IdentificationCardInitialRecord::findOne($id)) !== null) {
+        if (($model = IdentificationCardInitial::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');

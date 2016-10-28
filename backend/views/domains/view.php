@@ -39,6 +39,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'created_by',
             'updated_at',
             'updated_by',
+            'payment_method_value',
         ],
     ]) ?>
 

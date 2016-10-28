@@ -7,7 +7,7 @@ use common\models\PermissionHelpers;
 /* @var $this yii\web\View */
 /* @var $model backend\models\Profile */
 
-$this->title = $model->id;
+$this->title = $model->first_name . ' ' . $model->last_name;
 $this->params['breadcrumbs'][] = ['label' => 'Profiles', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 
@@ -16,7 +16,7 @@ $show_this_for_seller = PermissionHelpers::requireRole('Seller');
 ?>
 <div class="profile-view">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+    <h1><?= Html::encode( 'Profile: ' . $this->title) ?></h1>
 
     <p>
         <?php if (!Yii::$app->user->isGuest && ($show_this_for_admin || $show_this_for_seller)) {
@@ -25,9 +25,9 @@ $show_this_for_seller = PermissionHelpers::requireRole('Seller');
                                 'class' => 'btn btn-primary'
                             ]);
             }?>
-        
+
         <?php if (!Yii::$app->user->isGuest && $show_this_for_admin) {
-                    echo Html::a('Delete', ['delete', 'id' => $model->id], 
+                    echo Html::a('Delete', ['delete', 'id' => $model->id],
                             [
                                 'class' => 'btn btn-danger',
                                 'data' => [
@@ -49,23 +49,43 @@ $show_this_for_seller = PermissionHelpers::requireRole('Seller');
             ]);
     } else {
         $r = str_replace("/web", "", Yii::$app->params['uploadUrl']);
-        echo Html::img($r . $model->avatar, ['class' => 'img-thumbnail img-responsive', 'width' => 192]);        
+        echo Html::img($r . $model->avatar, ['class' => 'img-thumbnail img-responsive', 'width' => 192]);
     }
  ?>
-    <?= DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            ['attribute'=>'userLink', 'format'=>'raw'],
-            'id',
-            'first_name:ntext',
-            'last_name',
-            'birthdate',
-            'gender.gender_name',
-            'created_at',
-            'updated_at',
-            'filename',
-            'avatar',
-        ],
-    ]) ?>
+    <?php
+    if (!Yii::$app->user->isGuest && $show_this_for_admin) {
+        echo DetailView::widget([
+                'model' => $model,
+                'attributes' => [
+                ['attribute'=>'userLink', 'format'=>'raw'],
+                'id',
+                'first_name:ntext',
+                'last_name',
+                'birthdate',
+                'gender.gender_name',
+                'created_at',
+                'updated_at',
+                //'filename',
+                //'avatar',
+            ],
+        ]);
+    } elseif ($show_this_for_seller) {
+        echo DetailView::widget([
+                'model' => $model,
+                'attributes' => [
+                'username',
+                'id',
+                'first_name:ntext',
+                'last_name',
+                'birthdate',
+                'gender.gender_name',
+                'created_at',
+                'updated_at',
+                //'filename',
+                //'avatar',
+            ],
+        ]);
+    }
+     ?>
 
 </div>

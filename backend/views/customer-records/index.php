@@ -41,6 +41,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 }
             ],
             [
+                'attribute' => 'phone',
                 'label' => 'Phones',
                 'format' => 'paragraphs',
                 'value' => function ($model) {
@@ -59,6 +60,18 @@ $this->params['breadcrumbs'][] = $this->title;
                     $result = '';
                     foreach ($model->emails as $email) {
                         $result .= $email->fullEmail . "\n\n";
+                    }
+                    return $result;
+                }
+            ],
+            [
+                'attribute' => 'domain',
+                'label' => 'Domains',
+                'format' => 'paragraphs',
+                'value' => function ($model) {
+                    $result = '';
+                    foreach ($model->domains as $domain) {
+                        $result .= $domain->fullDomain . "\n\n";
                     }
                     return $result;
                 }
