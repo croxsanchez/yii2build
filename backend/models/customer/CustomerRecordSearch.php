@@ -110,7 +110,10 @@ class CustomerRecordSearch extends CustomerRecord
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
-        ]);
+            'pagination' => [
+                    'pageSize' => 10,
+                ],
+            ]);
 
         $query->joinWith('addresses');
         $dataProvider->sort->attributes['country'] = [
@@ -139,7 +142,7 @@ class CustomerRecordSearch extends CustomerRecord
         }
 
         // grid filtering conditions
-        $query->where(['created_by' => $params['seller_id']]);
+        $query->where(['created_by' => $params['seller_user_id']]);
 
         $query->andFilterWhere([
             'customer.id' => $this->id,
@@ -154,7 +157,9 @@ class CustomerRecordSearch extends CustomerRecord
         $query->andFilterWhere(['like', 'name', $this->name])
             ->andFilterWhere(['like', 'notes', $this->notes]);
 
-        $query->andFilterWhere(['like', 'address.country',$this->country]);/*$query = CustomerRecord::find();
+        $query->andFilterWhere(['like', 'address.country',$this->country]);
+        
+        /*$query = CustomerRecord::find();
 
         $dataProvider = (new ActiveDataProvider([
             'query' => $query,
@@ -184,7 +189,7 @@ class CustomerRecordSearch extends CustomerRecord
         ]);
 
         $query->select(['id', 'name', 'birth_date'])
-            ->where(['created_by' => $params['seller_id']])
+            ->where(['created_by' => $params['seller_user_id']])
             ->all();
 
         $this->load($params);*/
@@ -235,7 +240,7 @@ class CustomerRecordSearch extends CustomerRecord
         $query->select(['customer.id', 'customer.name', 'domain.name AS domainName', 'paymentStatus' => $subQuery])
             //->from('customer')
             ->innerjoin('domain', 'domain.customer_id = customer.id')
-            ->where(['customer.created_by' => $params['seller_id']])
+            ->where(['customer.created_by' => $params['seller_user_id']])
             ->andWhere(['domain.payment_status_value' => 10])
             ->all();
 
@@ -287,7 +292,7 @@ class CustomerRecordSearch extends CustomerRecord
         $query->select(['customer.id', 'customer.name', 'domain.name AS domainName', 'paymentStatus' => $subQuery])
             //->from('customer')
             ->innerjoin('domain', 'domain.customer_id = customer.id')
-            ->where(['customer.created_by' => $params['seller_id']])
+            ->where(['customer.created_by' => $params['seller_user_id']])
             ->andWhere(['domain.payment_status_value' => 20])
             ->all();
 

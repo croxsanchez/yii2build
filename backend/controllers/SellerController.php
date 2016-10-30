@@ -7,9 +7,11 @@ use backend\models\Seller;
 use backend\models\search\SellerSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+
 use yii\filters\VerbFilter;
 use backend\models\SellerForm;
 use common\models\User;
+use common\models\PermissionHelpers;
 
 /**
  * SellerController implements the CRUD actions for Seller model.
@@ -47,13 +49,56 @@ class SellerController extends Controller
      */
     public function actionIndex()
     {
-        $searchModel = new SellerSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        if (PermissionHelpers::requireMinimumRole('Admin')
+                && PermissionHelpers::requireStatus('Active')){
+            $searchModel = new SellerSearch();
+            $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
-        return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-        ]);
+            return $this->render('index', [
+                'searchModel' => $searchModel,
+                'dataProvider' => $dataProvider,
+            ]);
+        } elseif (PermissionHelpers::requireRole('Seller')
+                    && PermissionHelpers::requireStatus('Active')){
+            return $this->redirect([
+                'my-organization',
+                'seller_user_id' => Yii::$app->user->id,
+            ]);
+
+        }
+    }
+
+    /**
+     * Displays the first level of sellers the current seller's 
+     * "My Organization".
+     * @return mixed
+     */
+    public function actionMyOrganization($seller_user_id, $parent_seller_id=0)
+    {
+        if (!Yii::$app->user->isGuest &&
+            PermissionHelpers::requireRole('Seller')
+                    && PermissionHelpers::requireStatus('Active')){
+            $searchModel = new SellerSearch();
+            $dataProvider = $searchModel->searchMyOrganization(Yii::$app->request->queryParams);
+
+            if ($seller_user_id == Yii::$app->user->id){
+                return $this->render('my-organization', [
+                        'searchModel'  => $searchModel,
+                        'dataProvider' => $dataProvider,
+                        'seller_user_id' => $seller_user_id,
+                        'parent_seller_id' => $parent_seller_id
+                    ]);
+            } else {
+                return $this->renderAjax('my-organization', [
+                        'searchModel'  => $searchModel,
+                        'dataProvider' => $dataProvider,
+                        'seller_user_id' => $seller_user_id,
+                        'parent_seller_id' => $parent_seller_id
+                    ]);
+            }
+        } else {
+            throw new NotFoundHttpException('You\'re not allowed to enter this site.');
+        }
     }
 
     /**
@@ -76,10 +121,13 @@ class SellerController extends Controller
     public function actionCreate()
     {
         $model = new SellerForm();
+        $model->setScenario('create');
         
         if ($model->load(Yii::$app->request->post())) {
             if ($seller = $model->create()) {
                 return $this->redirect(['view', 'id' => $seller->getId()]);
+            } else {
+                throw new NotFoundHttpException('There were errors creating new User, Seller or Sub-model.');
             }
         }
         return $this->render('create', [
@@ -105,6 +153,7 @@ class SellerController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $model->setScenario('update');
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);

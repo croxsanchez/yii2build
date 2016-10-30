@@ -22,7 +22,7 @@ use yii\helpers\Html;
  * @property Points[] $points
  * @property User $user
  */
-class Seller extends \yii\db\ActiveRecord
+class Seller extends ActiveRecord
 {
     /**
      * @inheritdoc
@@ -53,7 +53,8 @@ class Seller extends \yii\db\ActiveRecord
     {
         return [
             'idLink' => Yii::t('app', 'ID'),
-            'userLink' => Yii::t('app', 'User ID'),
+            'userIdLink' => Yii::t('app', 'User ID'),
+            'userLink' => Yii::t('app', 'User Name'),
             'parentUserLink' => Yii::t('app', 'Parent ID'),
             'total_points' => Yii::t('app', 'Total Points'),
             'rankName' => Yii::t('app', 'Rank'),
@@ -105,21 +106,13 @@ class Seller extends \yii\db\ActiveRecord
     }
     
     /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getParentUser()
-    {
-        return $this->hasOne(User::className(), ['id' => 'parent_id']);
-    }
-    
-    /**
     * @getUserIdLink
     *
     */
     public function getUserIdLink(){
         $url = Url::to(['user/update', 'id'=>$this->user_id]);
         $options = [];
-        return Html::a($this->id, $url, $options);
+        return Html::a($this->user_id, $url, $options);
     }
     
     /**
@@ -129,7 +122,32 @@ class Seller extends \yii\db\ActiveRecord
     public function getUserLink(){
         $url = Url::to(['user/view', 'id'=>$this->user_id]);
         $options = [];
-        return Html::a($this->username, $url, $options);
+        return Html::a($this->user ? $this->user->username : '- no user -', $url, $options);
+    }
+    
+    /**
+    * @getUserLink
+    *
+    */
+    public function getSellerOrganization(){
+        $url = Url::to(['seller/my-organization', 'seller_user_id'=>$this->user_id, 'parent_seller_id' => $this->parent_id]);
+        $options = [
+            'id' => 'seller-organization',
+            'class' => 'btn btn-primary',
+            'data-toggle' => 'modal',
+            'data-target' => '#modal',
+            'data-url' => $url,
+            'data-pjax' => '0',
+        ];
+        return Html::a($this->user ? $this->user->username.": Organization" : '- no user -', '#', $options);
+    }
+    
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getParentUser()
+    {
+        return $this->hasOne(User::className(), ['id' => 'parent_id']);
     }
     
     /**

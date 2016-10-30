@@ -4,6 +4,7 @@ namespace backend\models;
 
 use common\models\User;
 use backend\models\Seller;
+use backend\models\SellerIdentificationCard;
 use yii\base\Model;
 use Yii;
 
@@ -17,9 +18,10 @@ class SellerForm extends Model
     public $last_name;
     public $ident_card_id;
     public $ident_card_init_id;
-    public $ident_card_number;
+    public $number; // Identification Card Number
     public $email;
     public $password;
+    public $confirm_password;
     public $role_id;
     public $user_type_id;
     public $status_id;
@@ -39,23 +41,48 @@ class SellerForm extends Model
     {
         return [
             ['username', 'filter', 'filter' => 'trim'],
-            ['username', 'required'],
+            [['username', 'email', 'password', 'confirm_password'], 'required', 'on' => 'create'],
+            [['username', 'email'], 'required', 'on' => 'update'],
             ['username', 'unique', 'targetClass' => '\common\models\User', 'message' => 'This username has already been taken.'],
             ['username', 'string', 'min' => 2, 'max' => 255],
 
             ['email', 'filter', 'filter' => 'trim'],
-            ['email', 'required'],
             ['email', 'email'],
             ['email', 'string', 'max' => 255],
             ['email', 'unique', 'targetClass' => '\common\models\User', 'message' => 'This email address has already been taken.'],
 
             ['password', 'required'],
             ['password', 'string', 'min' => 6],
-            [['ident_card_id', 'ident_card_init_id', 'ident_card_number'], 'required'],
+            ['password', 'passwordCriteria'],
+            ['confirm_password', 'string', 'min' => 6],
+            [['confirm_password'], 'compare', 'compareAttribute' => 'password'],
+            [['ident_card_id', 'ident_card_init_id', 'number'], 'required'],
+            ['number', 'unique', 'targetClass' => '\backend\models\SellerIdentificationCard', 'message' => 'This id card number has already been taken.'],
             ['role_id', 'default', 'value' => 20],
             ['user_type_id', 'default', 'value' => 10],
             [['role_id', 'user_type_id', 'status_id'], 'safe'],
         ];
+    }
+    
+    /*
+     * Función para validar criterios adicionales en la cadena de password
+     * REVISAR CON CUIDADO PARA COLOCAR CRITERIOS COMPLETOS
+     */
+    public function passwordCriteria()
+    {
+        if(!empty($this->password)){
+            if(strlen($this->password)<6){
+                $this->addError('password','Password must contains at least six letters, one digit and one character.');
+            }
+            else{
+                if(!preg_match('/[0-9]/',$this->password)){
+                    $this->addError('password','Password must contain at least one digit.');
+                }
+                if(!preg_match('/[a-zA-Z]/', $this->password)){
+                    $this->addError('password','Password must contain at least one character.');
+                }
+            }
+        }
     }
 
     public function __construct($config = []) {
@@ -86,7 +113,17 @@ class SellerForm extends Model
                 $seller->parent_id = Yii::$app->user->id;
                 $seller->rank_date= $user->getCreatedAt();
                 if ($seller->save()){
-                    return $seller;
+                    $seller_id_card = new SellerIdentificationCard();
+                    $seller_id_card->seller_id = $seller->id;
+                    $seller_id_card->number = $this->number;
+                    $seller_id_card->identification_card_initial_id = $this->ident_card_init_id;
+                            
+                    if ($seller_id_card->save()){
+                        return $seller;
+                    } else {
+                        return null;
+                    }
+                        
                 }
             }
         }

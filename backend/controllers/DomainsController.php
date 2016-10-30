@@ -86,12 +86,15 @@ class DomainsController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $customer_id = $model->customer_id;
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            //return $this->redirect(['view', 'id' => $model->id]);
+            return $this->goBack();
         } else {
             return $this->render('update', [
                 'model' => $model,
+                'customer_id' => $customer_id
             ]);
         }
     }

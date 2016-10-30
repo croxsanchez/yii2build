@@ -52,7 +52,7 @@ class CustomerRecordsController extends Controller
                     && PermissionHelpers::requireStatus('Active')){
             return $this->redirect([
                 'my-customers',
-                'seller_id' => Yii::$app->user->id,
+                'seller_user_id' => Yii::$app->user->id,
             ]);
 
         }
@@ -62,7 +62,7 @@ class CustomerRecordsController extends Controller
      * Displays the list of customers for the current seller.
      * @return mixed
      */
-    public function actionMyCustomers($seller_id)
+    public function actionMyCustomers($seller_user_id)
     {
         if (!Yii::$app->user->isGuest &&
             PermissionHelpers::requireRole('Seller')
@@ -73,6 +73,7 @@ class CustomerRecordsController extends Controller
             return $this->render('my-customers', [
                     'searchModel'  => $searchModel,
                     'dataProvider' => $dataProvider,
+                    'seller_user_id' => $seller_user_id,
                 ]);
         } else {
             throw new NotFoundHttpException('You\'re not allowed to enter this site.');
@@ -83,7 +84,7 @@ class CustomerRecordsController extends Controller
      * Displays the list of customers with domains pending for payment
      * for the current seller.
      */
-    public function actionCustomersPendingPayment($seller_id)
+    public function actionCustomersPendingPayment($seller_user_id)
     {
         if (!Yii::$app->user->isGuest &&
             PermissionHelpers::requireRole('Seller')
@@ -105,7 +106,7 @@ class CustomerRecordsController extends Controller
      * Displays the list of customers with domains already paid out
      * for the current seller.
      */
-    public function actionCustomersPaidOut($seller_id)
+    public function actionCustomersPaidOut($seller_user_id)
     {
         if (!Yii::$app->user->isGuest &&
             PermissionHelpers::requireRole('Seller')

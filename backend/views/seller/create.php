@@ -77,13 +77,15 @@ echo $form->field($model, 'ident_card_init_id')->dropDownList(
 ); ?>
 <div id="number" style="display:none;">
 <?php
-    echo $form->field($model, 'ident_card_number')->textInput(['maxlength' => 255]);
+    echo $form->field($model, 'number')->textInput(['maxlength' => 255]);
 ?>
 </div>
 
     <?= $form->field($model, 'email')->textInput(['maxlength' => 255]) ?>
 
     <?= $form->field($model, 'password')->passwordInput(['maxlength' => 255]) ?>
+    
+    <?= $form->field($model, 'confirm_password')->passwordInput(['maxlength' => 255]) ?>
 
     <?= Html::submitButton('Submit', ['class' => 'btn btn-primary']); ?>
 
