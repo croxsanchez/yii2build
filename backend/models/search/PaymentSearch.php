@@ -19,8 +19,8 @@ class PaymentSearch extends Payment
     {
         return [
             [['id', 'payment_method_value', 'invoice_id', 'domain_id'], 'integer'],
-            [['ref_number', 'date'], 'safe'],
             [['amount'], 'number'],
+            [['date'], 'safe'],
         ];
     }
 
@@ -67,8 +67,6 @@ class PaymentSearch extends Payment
             'invoice_id' => $this->invoice_id,
             'domain_id' => $this->domain_id,
         ]);
-
-        $query->andFilterWhere(['like', 'ref_number', $this->ref_number]);
 
         return $dataProvider;
     }

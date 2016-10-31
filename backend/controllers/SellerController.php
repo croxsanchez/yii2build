@@ -19,6 +19,15 @@ use common\models\PermissionHelpers;
 class SellerController extends Controller
 {
     /**
+     * MODIFY THIS VALUE ONLY in case of needing to change the total number of 
+     * seller-records per level for the sellers' organization.
+     */
+    const MAX_NUMBER_OF_SELLERS_PER_LEVEL = 20;
+    const MAX_LEVEL_DEPTH = 3;
+    private $organization_level = 0;
+
+
+    /**
      * @inheritdoc
      */
     public function behaviors()
@@ -73,7 +82,7 @@ class SellerController extends Controller
      * "My Organization".
      * @return mixed
      */
-    public function actionMyOrganization($seller_user_id, $parent_seller_id=0)
+    public function actionMyOrganization($seller_user_id, $parent_seller_id=0, $offset=0)
     {
         if (!Yii::$app->user->isGuest &&
             PermissionHelpers::requireRole('Seller')
@@ -82,6 +91,7 @@ class SellerController extends Controller
             $dataProvider = $searchModel->searchMyOrganization(Yii::$app->request->queryParams);
 
             if ($seller_user_id == Yii::$app->user->id){
+                $this->organization_level = 1;
                 return $this->render('my-organization', [
                         'searchModel'  => $searchModel,
                         'dataProvider' => $dataProvider,
@@ -89,18 +99,30 @@ class SellerController extends Controller
                         'parent_seller_id' => $parent_seller_id
                     ]);
             } else {
-                return $this->renderAjax('my-organization', [
-                        'searchModel'  => $searchModel,
-                        'dataProvider' => $dataProvider,
-                        'seller_user_id' => $seller_user_id,
-                        'parent_seller_id' => $parent_seller_id
-                    ]);
+                if ($this->changeOrganizationLevel($offset) <= self::MAX_LEVEL_DEPTH){
+                    return $this->renderAjax('my-organization', [
+                            'searchModel'  => $searchModel,
+                            'dataProvider' => $dataProvider,
+                            'seller_user_id' => $seller_user_id,
+                            'parent_seller_id' => $parent_seller_id
+                        ]);
+                } else {
+                    throw new NotFoundHttpException('You\'re not allowed to enter this level.');
+                }
             }
         } else {
             throw new NotFoundHttpException('You\'re not allowed to enter this site.');
         }
     }
 
+    /**
+     * Changes the organization_level attribute.
+     * @param integer $offset
+     * @return integer
+     */public function changeOrganizationLevel($offset) {
+        return $this->organization_level += $offset;
+    }
+    
     /**
      * Displays a single Seller model.
      * @param integer $id
@@ -120,28 +142,30 @@ class SellerController extends Controller
      */
     public function actionCreate()
     {
-        $model = new SellerForm();
-        $model->setScenario('create');
-        
-        if ($model->load(Yii::$app->request->post())) {
-            if ($seller = $model->create()) {
-                return $this->redirect(['view', 'id' => $seller->getId()]);
+        if(!Yii::$app->user->isGuest &&
+            PermissionHelpers::requireRole('Seller')
+                    && PermissionHelpers::requireStatus('Active')){
+            $seller_user_id = Yii::$app->user->id;
+
+            // Check for availability in seller organization's 1st level.
+            if ($this->firstLevelTotal($seller_user_id) < self::MAX_NUMBER_OF_SELLERS_PER_LEVEL ){
+                $model = new SellerForm();
+                $model->setScenario('create');
+
+                if ($model->load(Yii::$app->request->post())) {
+                    if ($seller = $model->create()) {
+                        return $this->redirect(['view', 'id' => $seller->getId()]);
+                    } else {
+                        throw new NotFoundHttpException('There were errors creating new User, Seller or Sub-model.');
+                    }
+                }
+                return $this->render('create', [
+                    'model' => $model,
+                ]);
             } else {
-                throw new NotFoundHttpException('There were errors creating new User, Seller or Sub-model.');
+                throw new NotFoundHttpException('You\'ve reached the maximum number of sellers you can create.');
             }
         }
-        return $this->render('create', [
-            'model' => $model,
-        ]);
-        /*$model = new Seller();
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            return $this->render('create', [
-                'model' => $model,
-            ]);
-        }*/
     }
 
     /**
@@ -191,5 +215,20 @@ class SellerController extends Controller
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+    
+    /**
+     * Returns the total num of records for the seller organization's 1st level.
+     * @return integer
+     */
+    public function firstLevelTotal($id)
+    {
+        $query = new \yii\db\Query();
+        $result = $query->select('COUNT(*)')
+            ->from('seller')
+            ->where(['parent_id' => $id])
+            ->one();
+
+        return $total = $result['count'];
     }
 }

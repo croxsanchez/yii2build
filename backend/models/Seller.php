@@ -130,7 +130,7 @@ class Seller extends ActiveRecord
     *
     */
     public function getSellerOrganization(){
-        $url = Url::to(['seller/my-organization', 'seller_user_id'=>$this->user_id, 'parent_seller_id' => $this->parent_id]);
+        $url = Url::to(['seller/my-organization', 'seller_user_id'=>$this->user_id, 'parent_seller_id' => $this->parent_id, 'offset' => 1]);
         $options = [
             'id' => 'seller-organization',
             'class' => 'btn btn-primary',

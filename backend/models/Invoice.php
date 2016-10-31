@@ -40,6 +40,7 @@ class Invoice extends \yii\db\ActiveRecord
             [['domain_id', 'payment_status_value'], 'integer'],
             [['due_date'], 'safe'],
             [['ref_number'], 'string', 'max' => 255],
+            [['ref_number'], 'unique'],
             [['domain_id'], 'exist', 'skipOnError' => true, 'targetClass' => DomainRecord::className(), 'targetAttribute' => ['domain_id' => 'id']],
         ];
     }

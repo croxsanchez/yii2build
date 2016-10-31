@@ -17,23 +17,25 @@ $this->params['breadcrumbs'][] = $this->title;
         if ($seller_user_id != Yii::$app->user->id){
     ?>
     <h1><?= Html::encode($this->title) ?></h1>
+    <p>
+        <?= Html::a('Go Back', ['seller/my-organization', 
+                    'seller_user_id' => $parent_seller_id,
+                    'offset' => -1
+                    ], ['class' => 'btn btn-success']);        
+        ?>
+    </p>
+    
     <?php
         } else {
     ?>
     <h1><?= Html::encode('My ' . $this->title) ?></h1>
+    <p>
+        <?= Html::a('Create 1st-Level Seller', ['create'], ['class' => 'btn btn-success']) ?>    
+    </p>
     <?php 
         }
     ?>
-    <p>
-        <?= Html::a('Create 1st-Level Seller', ['create'], ['class' => 'btn btn-success']) ?>
-        <?php
-        if ($seller_user_id != Yii::$app->user->id){
-            echo Html::a('Go Back', ['seller/my-organization', 
-                    'seller_user_id' => $parent_seller_id
-                    ], ['class' => 'btn btn-success']);
-        }
-        ?>
-    </p>
+    
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,

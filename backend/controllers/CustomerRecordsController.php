@@ -149,9 +149,12 @@ class CustomerRecordsController extends Controller
             $this->storeReturnUrl();
             $model = new CustomerRecord();
 
-            if ($model->load(Yii::$app->request->post()) && $model->save()) {
-                //return $this->redirect(['view', 'id' => $model->id]);
-                return $this->redirect(['update', 'id' => $model->id]);
+            if ($model->load(Yii::$app->request->post())) {
+                if ($model->createIdentCardRecord()) {
+                    return $this->redirect(['update', 'id' => $model->id]);
+                } else {
+                        throw new NotFoundHttpException('There were errors creating new Customer.');
+                }
             } else {
                 return $this->render('create', [
                     'model' => $model,
@@ -160,7 +163,6 @@ class CustomerRecordsController extends Controller
         } else {
             throw new NotFoundHttpException('You\'re not allowed to perform this action.');
         }
-
     }
 
     /**
