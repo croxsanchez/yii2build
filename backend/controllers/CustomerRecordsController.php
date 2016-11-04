@@ -148,13 +148,10 @@ class CustomerRecordsController extends Controller
                     && PermissionHelpers::requireStatus('Active')){
             $this->storeReturnUrl();
             $model = new CustomerRecord();
+            $model->setScenario('create');
 
             if ($model->load(Yii::$app->request->post())) {
-                if ($model->createIdentCardRecord()) {
-                    return $this->redirect(['update', 'id' => $model->id]);
-                } else {
-                        throw new NotFoundHttpException('There were errors creating new Customer.');
-                }
+                return $this->redirect(['update', 'id' => $model->id]);
             } else {
                 return $this->render('create', [
                     'model' => $model,

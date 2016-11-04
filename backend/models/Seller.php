@@ -14,10 +14,11 @@ use yii\helpers\Html;
  * @property integer $id
  * @property integer $user_id
  * @property integer $parent_id
- * @property integer $total_points
+ * @property double $total_points
  * @property integer $rank_value
  * @property string $rank_date
  * @property integer $credits
+ * @property string $id_card_number
  *
  * @property Points[] $points
  * @property User $user
@@ -38,9 +39,12 @@ class Seller extends ActiveRecord
     public function rules()
     {
         return [
-            [['user_id', 'parent_id', 'rank_date'], 'required'],
-            [['user_id', 'parent_id', 'total_points', 'rank_value', 'credits'], 'integer'],
+            [['user_id', 'parent_id', 'rank_date', 'id_card_number'], 'required'],
+            [['user_id', 'parent_id', 'rank_value', 'credits'], 'integer'],
+            [['total_points'], 'number'],
             [['rank_date'], 'safe'],
+            [['id_card_number'], 'string', 'max' => 40], 
+            [['id_card_number'], 'unique'],
             [['user_id'], 'unique'],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_id' => 'id']],
         ];
@@ -60,6 +64,7 @@ class Seller extends ActiveRecord
             'rankName' => Yii::t('app', 'Rank'),
             'rankDate' => Yii::t('app', 'Rank Date'),
             'credits' => Yii::t('app', 'Credits'),
+            'id_card_number' => 'Id Card Number',
         ];
     }
 

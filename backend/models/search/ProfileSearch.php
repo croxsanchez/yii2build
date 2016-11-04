@@ -16,7 +16,7 @@ class ProfileSearch extends Profile
     {
         return [
             [['id', 'gender_id'], 'integer'],
-            [['first_name', 'last_name', 'birthdate', 'genderName','userId', 'filename', 'avatar'], 'safe'],
+            [['first_name', 'last_name', 'birth_date', 'genderName','userId', 'filename', 'avatar'], 'safe'],
         ];
     }
 
@@ -42,7 +42,7 @@ class ProfileSearch extends Profile
                 'id',
                 'first_name',
                 'last_name',
-                'birthdate',
+                'birth_date',
                 'genderName' => [
                     'asc' => ['gender.gender_name' => SORT_ASC],
                     'desc' => ['gender.gender_name' => SORT_DESC],
@@ -70,7 +70,7 @@ class ProfileSearch extends Profile
         $this->addSearchParameter($query, 'profile.id');
         $this->addSearchParameter($query, 'first_name', true);
         $this->addSearchParameter($query, 'last_name', true);
-        $this->addSearchParameter($query, 'birthdate');
+        $this->addSearchParameter($query, 'birth_date');
         $this->addSearchParameter($query, 'gender_id');
         $this->addSearchParameter($query, 'created_at');
         $this->addSearchParameter($query, 'updated_at');

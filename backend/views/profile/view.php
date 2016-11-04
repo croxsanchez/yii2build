@@ -11,7 +11,7 @@ $this->title = $model->first_name . ' ' . $model->last_name;
 $this->params['breadcrumbs'][] = ['label' => 'Profiles', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 
-$show_this_for_admin = PermissionHelpers::requireMinimumRole('SuperUser');
+$show_this_for_admin = PermissionHelpers::requireRole('SuperUser');
 $show_this_for_seller = PermissionHelpers::requireRole('Seller');
 ?>
 <div class="profile-view">
@@ -59,10 +59,12 @@ $show_this_for_seller = PermissionHelpers::requireRole('Seller');
                 'attributes' => [
                 ['attribute'=>'userLink', 'format'=>'raw'],
                 'id',
+                'user_id',
                 'first_name:ntext',
                 'last_name',
-                'birthdate',
-                'gender.gender_name',
+                'email',
+                'birth_date',
+                //'gender.gender_name',
                 'created_at',
                 'updated_at',
                 //'filename',
@@ -74,11 +76,11 @@ $show_this_for_seller = PermissionHelpers::requireRole('Seller');
                 'model' => $model,
                 'attributes' => [
                 'username',
-                'id',
                 'first_name:ntext',
                 'last_name',
-                'birthdate',
-                'gender.gender_name',
+                'email',
+                'birth_date',
+                //'gender.gender_name',
                 'created_at',
                 'updated_at',
                 //'filename',
@@ -87,5 +89,43 @@ $show_this_for_seller = PermissionHelpers::requireRole('Seller');
         ]);
     }
      ?>
+    <?php if (!Yii::$app->user->isGuest && ($show_this_for_admin || $show_this_for_seller)): ?>
+    <!-- subtables will be here... -->
+    <h2>Phones</h2>
+    <?= \yii\grid\GridView::widget([
+        'dataProvider' => new \yii\data\ActiveDataProvider([
+            'query' => $model->getSellerPhones(),
+            'pagination' => false
+        ]),
+        'columns' => [
+            'number',
+            'purpose',
+        ]
+    ]);?>
+    
+    <h2>Addresses</h2>
+    <?= \yii\grid\GridView::widget([
+        'dataProvider' => new \yii\data\ActiveDataProvider(
+                [
+                    'query' => $model->getSellerAddresses(), 
+                    'pagination' => false
+                ]
+        ),
+        'columns' => [
+            [
+                'label' => 'Address',
+                'value' => function ($model) {
+                    return implode(', ',
+                        array_filter(
+                            $model->getAttributes(
+                                ['country', 'state', 'city', 'street',
+                                    'building', 'apartment'])));
+                }
+            ],
+            'purpose',
+        ],
+    ]);?>
+    
+    <?php endif;?>
 
 </div>

@@ -7,7 +7,7 @@ use yii\grid\GridView;
 /* @var $searchModel backend\models\customer\CustomerRecordSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Sites already paid';
+$this->title = 'Sites Pending for Payment';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="customer-record-index">
@@ -18,12 +18,16 @@ $this->params['breadcrumbs'][] = $this->title;
         'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-            'id',
+            [
+                'attribute' => 'id',
+                'label' => 'Domain Id',
+            ],
+            'customer_id',
+            'customerName',
             [
                 'attribute' => 'name',
                 'label' => 'Domain Name',
             ],
-            'customerName',
             'paymentStatus',
             [
                 'class' => 'yii\grid\ActionColumn',

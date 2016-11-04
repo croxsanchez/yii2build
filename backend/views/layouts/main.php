@@ -100,38 +100,20 @@ FontAwesomeAsset::register($this);
         $menuItems[] = [
             'label' => 'Site Manager',
             'items' => [
-                    [
-                    'label' => 'Developing',
-                    'items' => [
-                            [
-                                'label' => 'Pending for Payment',
-                                'url' => [
-                                    'customer-records/customers-pending-payment',
-                                    'seller_id' => Yii::$app->user->id,
-                                    'tag' => 'pending'
-                                ]
-                            ],
-                            [
-                                'label' => 'Modify Site',
-                                'url' => [
-                                    'customer-records/index',
-                                    'seller_id' => Yii::$app->user->id,
-                                    'tag' => 'paid'
-                                ]
-                            ],
+                [
+                    'label' => 'Sites Pending for Payment',
+                    'url' => [
+                        'domains/domains-pending-payment',
+                        'seller_user_id' => Yii::$app->user->id,
+                        'tag' => 'pending'
                     ]
                 ],
                 [
-                    'label' => 'Published',
-                    'items' => [
-                            [
-                                'label' => 'Already Paid Out',
-                                'url' => [
-                                    'customer-records/customers-paid-out',
-                                    'seller_id' => Yii::$app->user->id,
-                                    'tag' => 'paid'
-                                ]
-                            ],
+                    'label' => 'Sites Already Paid',
+                    'url' => [
+                        'domains/domains-paid-out',
+                        'seller_user_id' => Yii::$app->user->id,
+                        'tag' => 'paid'
                     ]
                 ],
             ]

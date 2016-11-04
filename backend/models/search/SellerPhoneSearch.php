@@ -1,16 +1,16 @@
 <?php
 
-namespace backend\models;
+namespace backend\models\search;
 
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use backend\models\Profile;
+use backend\models\SellerPhone;
 
 /**
- * ProfileSearch represents the model behind the search form about `backend\models\Profile`.
+ * SellerPhoneSearch represents the model behind the search form about `backend\models\SellerPhone`.
  */
-class ProfileSearch extends Profile
+class SellerPhoneSearch extends SellerPhone
 {
     /**
      * @inheritdoc
@@ -18,8 +18,8 @@ class ProfileSearch extends Profile
     public function rules()
     {
         return [
-            [['id', 'user_id', 'gender_id'], 'integer'],
-            [['first_name', 'last_name', 'birth_date', 'created_at', 'updated_at', 'filename', 'avatar'], 'safe'],
+            [['id', 'seller_id'], 'integer'],
+            [['purpose', 'number'], 'safe'],
         ];
     }
 
@@ -41,7 +41,7 @@ class ProfileSearch extends Profile
      */
     public function search($params)
     {
-        $query = Profile::find();
+        $query = SellerPhone::find();
 
         // add conditions that should always apply here
 
@@ -60,17 +60,11 @@ class ProfileSearch extends Profile
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'user_id' => $this->user_id,
-            'gender_id' => $this->gender_id,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'seller_id' => $this->seller_id,
         ]);
 
-        $query->andFilterWhere(['like', 'first_name', $this->first_name])
-            ->andFilterWhere(['like', 'last_name', $this->last_name])
-            ->andFilterWhere(['like', 'birth_date', $this->birth_date])
-            ->andFilterWhere(['like', 'filename', $this->filename])
-            ->andFilterWhere(['like', 'avatar', $this->avatar]);
+        $query->andFilterWhere(['like', 'purpose', $this->purpose])
+            ->andFilterWhere(['like', 'number', $this->number]);
 
         return $dataProvider;
     }

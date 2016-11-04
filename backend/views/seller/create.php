@@ -36,50 +36,7 @@ $form = ActiveForm::begin([
 
     <?= $form->field($model, 'username')->textInput(['maxlength' => 255]) ?>
 
-    <?php
-$document_type = ArrayHelper::map(IdentificationCardType::find()->all(), 'id', 'name');
-echo $form->field($model, 'ident_card_id')->dropDownList(
-    $document_type,
-    [
-        'prompt' => 'Please choose one',
-        'onchange' => '
-                        $.get(
-                        "'.Url::toRoute('dependent-dropdown/initial').'",
-                        { id: $(this).val() } )
-                            .done(function( data ) {
-                                $( "#'.Html::getInputId($model, 'ident_card_init_id').'" ).html( data );
-                            }
-                        );
-                    '
-    ]
-);
-?>
-
-<?php
-echo $form->field($model, 'ident_card_init_id')->dropDownList(
-	array(),
-    [
-        'prompt' => 'Please choose one',
-        ['id' => 'initial'],
-        'onchange' => '
-        				showNumber();
-						function showNumber(){
-							if (document.getElementById("'.Html::getInputId($model, 'ident_card_init_id').'").selectedIndex > 0)
-							{
-								document.getElementById("number").style.display="block";
-							} else {
-								document.getElementById("number").style.display="none";
-							}
-						}
-
-        			'
-    ]
-); ?>
-<div id="number" style="display:none;">
-<?php
-    echo $form->field($model, 'number')->textInput(['maxlength' => 255]);
-?>
-</div>
+    <?= $form->field($model, 'id_card_number')->textInput(['maxlength' => 40]); ?>
 
     <?= $form->field($model, 'email')->textInput(['maxlength' => 255]) ?>
 

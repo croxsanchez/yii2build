@@ -4,13 +4,13 @@ use yii\helpers\Html;
 
 
 /* @var $this yii\web\View */
-/* @var $model backend\models\Profile */
+/* @var $model backend\models\SellerPhone */
 
-$this->title = 'Create Profile for User: ' . $username;
-$this->params['breadcrumbs'][] = ['label' => 'Profiles', 'url' => ['index']];
+$this->title = 'Create Seller Phone';
+$this->params['breadcrumbs'][] = ['label' => 'Seller Phones', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="profile-create">
+<div class="seller-phone-create">
 
     <h1><?= Html::encode($this->title) ?></h1>
 

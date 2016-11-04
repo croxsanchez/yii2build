@@ -8,6 +8,7 @@ use backend\models\customer\DomainRecordSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use common\models\PermissionHelpers;
 
 /**
  * DomainsController implements the CRUD actions for DomainRecord model.
@@ -55,6 +56,50 @@ class DomainsController extends Controller
         return $this->render('view', [
             'model' => $this->findModel($id),
         ]);
+    }
+
+    /**
+     * Displays the list of customers with domains pending for payment
+     * for the current seller.
+     */
+    public function actionDomainsPendingPayment($seller_user_id)
+    {
+        if (!Yii::$app->user->isGuest &&
+            PermissionHelpers::requireRole('Seller')
+                    && PermissionHelpers::requireStatus('Active')){
+            $searchModel = new DomainRecordSearch();
+            $dataProvider = $searchModel->searchMyPendingForPayment(Yii::$app->request->queryParams);
+
+            return $this->render('pending-for-payment', [
+                    'searchModel'  => $searchModel,
+                    'dataProvider' => $dataProvider,
+                ]);
+
+        } else {
+            throw new NotFoundHttpException('You\'re not allowed to enter this view.');
+        }
+    }
+
+    /**
+     * Displays the list of customers with domains already paid out
+     * for the current seller.
+     */
+    public function actionDomainsPaidOut($seller_user_id)
+    {
+        if (!Yii::$app->user->isGuest &&
+            PermissionHelpers::requireRole('Seller')
+                    && PermissionHelpers::requireStatus('Active')){
+            $searchModel = new DomainRecordSearch();
+            $dataProvider = $searchModel->searchMyPaidOutDomains(Yii::$app->request->queryParams);
+
+            return $this->render('paid-out', [
+                    'searchModel'  => $searchModel,
+                    'dataProvider' => $dataProvider,
+                ]);
+
+        } else {
+            throw new NotFoundHttpException('You\'re not allowed to enter this view.');
+        }
     }
 
     /**

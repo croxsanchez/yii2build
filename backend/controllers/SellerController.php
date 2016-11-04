@@ -143,7 +143,7 @@ class SellerController extends Controller
     public function actionCreate()
     {
         if(!Yii::$app->user->isGuest &&
-            PermissionHelpers::requireRole('Seller')
+            (PermissionHelpers::requireRole('Seller') || PermissionHelpers::requireRole('Superuser'))
                     && PermissionHelpers::requireStatus('Active')){
             $seller_user_id = Yii::$app->user->id;
 

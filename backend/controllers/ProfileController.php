@@ -12,6 +12,7 @@ use yii\filters\VerbFilter;
 use common\models\PermissionHelpers;
 use common\models\RecordHelpers;
 use yii\web\UploadedFile;
+use common\models\User;
 
 Yii::$app->params['uploadPath'] = Yii::$app->basePath . '/web/uploads/';
 Yii::$app->params['uploadUrl'] = Yii::$app->urlManager->baseUrl . '/web/uploads/';
@@ -95,9 +96,12 @@ class ProfileController extends Controller
      */
     public function actionView($id)
     {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
+        if ((PermissionHelpers::requireMinimumRole('Admin') || PermissionHelpers::requireRole('Seller')) 
+                && PermissionHelpers::requireStatus('Active')){
+            return $this->render('view', [
+                'model' => $this->findModel($id),
+            ]);
+        }
     }
 
     /**
@@ -107,7 +111,13 @@ class ProfileController extends Controller
      */
     public function actionCreate()
     {
+        $this->storeReturnUrl();
         $model = new Profile();
+        
+        $username = User::find()
+                ->select('username')
+                ->where(['id' => Yii::$app->user->identity->id])
+                ->scalar();
 
         if (PermissionHelpers::requireRole('Seller') 
                 && PermissionHelpers::requireStatus('Active')){
@@ -129,7 +139,8 @@ class ProfileController extends Controller
                             $path = $model->getImageFile();
                             $image->saveAs($path);
                         }
-                        return $this->redirect(['view', 'id' => $model->user_id]);
+                        //return $this->redirect(['view', 'id' => $model->user_id]);
+                        return $this->redirect(['update', 'id' => $model->id]);
                     }
                 } catch (Exception $ex) {
                     throw new HttpException(405, 'Error saving model');
@@ -137,6 +148,7 @@ class ProfileController extends Controller
             } else {
                 return $this->render('create', [
                     'model' => $model,
+                    'username' => $username,
                     ]);
             }
         } elseif (PermissionHelpers::requireMinimumRole('Admin') 
@@ -146,6 +158,7 @@ class ProfileController extends Controller
             } else {
                 return $this->render('create', [
                     'model' => $model,
+                    'username' => $username,
                 ]);
             }
         }
@@ -159,7 +172,8 @@ class ProfileController extends Controller
      */
     public function actionUpdate($id)
     {
-        if (PermissionHelpers::requireRole('Seller') 
+        $this->storeReturnUrl();
+        if ((PermissionHelpers::requireRole('Seller') || PermissionHelpers::requireRole('Superuser'))
                 && PermissionHelpers::requireStatus('Active')){
             if($model = Profile::find()->where(['user_id' =>Yii::$app->user->identity->id])->one()) {
                 $oldFile = $model->getImageFile();
@@ -169,8 +183,6 @@ class ProfileController extends Controller
                 if ($model->load(Yii::$app->request->post())) {
                     // process uploaded image file instance
                     $model->image = $model->uploadImage();
-                    // $archivo = \yii\web\UploadedFile::getInstance($model, 'image');
-                    // $imagepath = Yii::$app->params['uploadPath'];
                     
                     if ($model->validate()){
 
@@ -188,16 +200,6 @@ class ProfileController extends Controller
                                     $model->image->saveAs($path);
                                 }
                                 return $this->redirect(['view', 'id' => $model->id]);
-                                /*
-                                return $this->render('prueba', [
-                                    'archivo' => $archivo, 
-                                    'nombre' => $model->filename,
-                                    'model' => $model,
-                                    'image' => $image,
-                                    'imagepath' => $imagepath,
-                                    ]);
-                                 * 
-                                 */
                             } else {
                                 return $this->render('update', [
                                     'model' => $model,
@@ -271,5 +273,10 @@ class ProfileController extends Controller
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+    
+    private function storeReturnUrl()
+    {
+        Yii::$app->user->returnUrl = Yii::$app->request->url;
     }
 }

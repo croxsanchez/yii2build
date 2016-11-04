@@ -77,9 +77,10 @@ class DomainRecord extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => 'ID',
+            'id' => 'Id',
             'name' => 'Name',
-            'customer_id' => 'Customer ID',
+            'customer_id' => 'Customer Id',
+            'customerName' => 'Full Name',
             'domainChoiceOrder' => Yii::t('app', 'Domain Name Preference'),
             'payment_status_value' => 'Payment Status',
             'domain_status_value' => 'Domain Status',

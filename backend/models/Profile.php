@@ -11,6 +11,8 @@ use yii\helpers\ArrayHelper;
 use yii\db\Expression;
 use frontend\models\Gender;
 use yii\web\UploadedFile;
+use backend\models\SellerAddress;
+use backend\models\SellerPhone;
 
 Yii::$app->params['uploadPath'] = Yii::$app->basePath . '/web/uploads/';
 Yii::$app->params['uploadUrl'] = Yii::$app->urlManager->baseUrl . '/web/uploads/';
@@ -22,12 +24,12 @@ Yii::$app->params['uploadUrl'] = Yii::$app->urlManager->baseUrl . '/web/uploads/
  * @property integer $user_id
  * @property string $first_name
  * @property string $last_name
- * @property string $birthdate
  * @property integer $gender_id
  * @property string $created_at
  * @property string $updated_at
  * @property string $filename
  * @property string $avatar
+ * @property string $birth_date
  *
  * @property Gender $gender
  */
@@ -49,11 +51,11 @@ class Profile extends ActiveRecord
     public function rules()
     {
         return [
-            [['user_id', 'gender_id', 'birthdate'], 'required'],
+            [['user_id'], 'required'],
             [['user_id', 'gender_id'], 'integer'],
+            [['created_at', 'updated_at', 'birth_date'], 'safe'],
             [['first_name', 'last_name'], 'string', 'max' => 45],
-            [['birthdate', 'created_at', 'updated_at'], 'safe'],
-            [['birthdate'], 'date', 'format'=>'Y-m-d'],
+            [['birth_date'], 'date', 'format'=>'Y-m-d'],
             [['image'], 'safe'],
             [['image'], 'image', 'extensions' => 'jpg, gif, png', 'mimeTypes' => 'image/jpeg, image/gif, image/png'],
             [['image'], 'image', 'maxSize'=> '10000000'],
@@ -71,18 +73,21 @@ class Profile extends ActiveRecord
     {
         return [
             'id' => 'ID',
+            'user_id' => 'User ID',
             'first_name' => 'First Name',
             'last_name' => 'Last Name',
-            'birthdate' => 'Birthdate',
             'gender_id' => 'Gender ID',
             'filename' => Yii::t('app', 'Filename'),
             'avatar' => Yii::t('app', 'Avatar'),
             'created_at' => 'Member Since',
             'updated_at' => 'Last Updated',
-            'user_id' => 'User ID',
             'genderName' => Yii::t('app', 'Gender'),
             'userLink' => Yii::t('app', 'User'),
+            'sellerPhones' => Yii::t('app', 'Phone Numbers'),
+            'sellerAddresses' => Yii::t('app', 'Addresses'),
+            'email' => Yii::t('app', 'Email'),
             'profileIdLink' => Yii::t('app', 'Profile'),
+            'birth_date' => 'Birth Date (Optional)',
         ];
     }
 
@@ -103,6 +108,24 @@ class Profile extends ActiveRecord
             ];
     }
     
+    
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getSellerPhones()
+    {
+        return $this->hasMany(SellerPhone::className(), ['seller_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getSellerAddresses()
+    {
+        return $this->hasMany(SellerAddress::className(), ['seller_id' => 'id']);
+    }
+
+
     /**
      * @return \yii\db\ActiveQuery
      */
@@ -142,6 +165,13 @@ class Profile extends ActiveRecord
     }
     
     /**
+    * @get Username
+    */
+    public function getEmail(){
+        return $this->user->email;
+    }
+    
+    /**
     * @getUserId
     */
     public function getUserId(){
@@ -167,9 +197,9 @@ class Profile extends ActiveRecord
     }
     
     public function beforeValidate(){
-        if ($this->birthdate != null) {
-            $new_date_format = date('Y-m-d', strtotime($this->birthdate));
-            $this->birthdate = $new_date_format;
+        if ($this->birth_date != null) {
+            $new_date_format = date('Y-m-d', strtotime($this->birth_date));
+            $this->birth_date = $new_date_format;
         }
         return parent::beforeValidate();
     }

@@ -4,7 +4,6 @@ namespace backend\models;
 
 use common\models\User;
 use backend\models\Seller;
-use backend\models\SellerIdentificationCard;
 use yii\base\Model;
 use Yii;
 
@@ -16,9 +15,7 @@ class SellerForm extends Model
     public $username;
     public $first_name;
     public $last_name;
-    public $ident_card_id;
-    public $ident_card_init_id;
-    public $number; // Identification Card Number
+    public $id_card_number;
     public $email;
     public $password;
     public $confirm_password;
@@ -56,8 +53,8 @@ class SellerForm extends Model
             ['password', 'passwordCriteria'],
             ['confirm_password', 'string', 'min' => 6],
             [['confirm_password'], 'compare', 'compareAttribute' => 'password'],
-            [['ident_card_id', 'ident_card_init_id', 'number'], 'required'],
-            ['number', 'unique', 'targetClass' => '\backend\models\SellerIdentificationCard', 'message' => 'This id card number has already been taken.'],
+            ['id_card_number', 'required'],
+            ['id_card_number', 'unique', 'targetClass' => '\backend\models\Seller', 'message' => 'This id card number has already been taken.'],
             ['role_id', 'default', 'value' => 20],
             ['user_type_id', 'default', 'value' => 10],
             [['role_id', 'user_type_id', 'status_id'], 'safe'],
@@ -112,23 +109,14 @@ class SellerForm extends Model
                 $seller->user_id = $user->id;
                 $seller->parent_id = Yii::$app->user->id;
                 $seller->rank_date= $user->getCreatedAt();
+                $seller->id_card_number = $this->id_card_number;
                 if ($seller->save()){
-                    $seller_id_card = new SellerIdentificationCard();
-                    $seller_id_card->seller_id = $seller->id;
-                    $seller_id_card->number = $this->number;
-                    $seller_id_card->identification_card_initial_id = $this->ident_card_init_id;
-                            
-                    if ($seller_id_card->save()){
-                        return $seller;
-                    } else {
-                        return null;
-                    }
-                        
+                    return $seller;
+                } else {
+                    return null;
                 }
             }
         }
-
-
 
         return  null;
     }

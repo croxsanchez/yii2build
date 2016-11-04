@@ -4,8 +4,6 @@ use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 //use yii\jui\DatePicker;
 use kartik\date\DatePicker;
-use backend\models\IdentificationCardInitial;
-use backend\models\IdentificationCardType;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
 /* @var $this yii\web\View */
@@ -19,9 +17,7 @@ use yii\helpers\Url;
 
     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
     
-    <?= //$form->field($model, 'birth_date')->widget(DatePicker::className(), 
-        //    ['clientOptions' => ['dateFormat' => 'yy-mm-dd']]); 
-        $form->field($model, 'birth_date')->widget(DatePicker::className(),
+    <?= $form->field($model, 'birth_date')->widget(DatePicker::className(),
                 [
                     'name' => 'birth_date', 
                     'value' => date('Y-m-d'),
@@ -34,65 +30,9 @@ use yii\helpers\Url;
 
     <?= $form->field($model, 'notes')->textarea(['rows' => 6]) ?>
     
-    <?php if ($model->isNewRecord):?>
-                        
-    <?= $form->field($model, 'customer_type_id')->dropDownList($model->customerTypeList, 
-            [
-                'prompt' => 'Please choose one',
-                'onchange' => '
-                            $.get(
-                            "'.Url::toRoute('dependent-dropdown/card-type').'",
-                            { id: $(this).val() } )
-                                .done(function( data ) {
-                                    $( "#'.Html::getInputId($model, 'ident_card_id').'" ).html( data );
-                                }
-                            );
-                        '
-                ]); ?>
+    <?= $form->field($model, 'customer_type_id')->dropDownList($model->customerTypeList, ['prompt' => 'Please choose one']); ?>
     
-    <?php
-    $document_type = ArrayHelper::map(IdentificationCardType::find()->all(), 'id', 'name');
-    echo $form->field($model, 'ident_card_id')->dropDownList(
-        $document_type,
-        [
-            'prompt' => 'Please choose one',
-            'onchange' => '
-                            $.get(
-                            "'.Url::toRoute('dependent-dropdown/initial').'",
-                            { id: $(this).val() } )
-                                .done(function( data ) {
-                                    $( "#'.Html::getInputId($model, 'ident_card_init_id').'" ).html( data );
-                                }
-                            );
-                        '
-        ]
-    );
-    ?>
-
-    <?php
-    echo $form->field($model, 'ident_card_init_id')->dropDownList(
-            array(),
-        [
-            'prompt' => 'Please choose one',
-            ['id' => 'initial'],
-            'onchange' => '
-                            showNumber();
-                            function showNumber(){
-                                    if (document.getElementById("'.Html::getInputId($model, 'ident_card_init_id').'").selectedIndex > 0)
-                                    {
-                                            document.getElementById("number").style.display="block";
-                                    } else {
-                                            document.getElementById("number").style.display="none";
-                                    }
-                            }
-
-                        '
-        ]
-    ); ?>
-<div id="number" style="display:none;">
-    <?= $form->field($model, 'number')->textInput(['maxlength' => 255]);?>
-</div>
-    <?php endif?>
+    <?= $form->field($model, 'id_card_number')->textInput(['maxlength' => 40]);?>
 
     <?= $form->field($model, 'online_store')->checkbox(); ?>
     
@@ -100,52 +40,6 @@ use yii\helpers\Url;
     
     <?php if (!$model->isNewRecord):?>
     <!-- subtables will be here... -->
-    <h2>Identification Document</h2>
-    <?= \yii\grid\GridView::widget([
-        'dataProvider' => new \yii\data\ActiveDataProvider([
-            'query' => $model->getIdentification(),
-            'pagination' => false
-        ]),
-        'columns' => [
-            [
-                'attribute' => 'identification_card_initial_id',
-                'label' => 'Customer Type',
-                'format' => 'paragraphs',
-                'value' => function ($model) {
-                    $result = '';
-                    $result .= $model->customerTypeName . "\n\n";
-                    return $result;
-                }
-            ],
-            [
-                'attribute' => 'identification_card_initial_id',
-                'label' => 'Doc. Type',
-                'format' => 'paragraphs',
-                'value' => function ($model) {
-                    $result = '';
-                    $result .= $model->identificationCardTypeName . "\n\n";
-                    return $result;
-                }
-            ],
-            [
-                'attribute' => 'identification_card_initial_id',
-                'label' => 'Doc. Initial',
-                'format' => 'paragraphs',
-                'value' => function ($model) {
-                    $result = '';
-                    $result .= $model->identificationCardInitialName . "\n\n";
-                    return $result;
-                }
-            ],
-            'number',
-            [
-                'class' => \yii\grid\ActionColumn::className(),
-                'controller' => 'customer-identification-card',
-                'template' => '{update}{delete}',
-            ]
-        ]
-    ]);?>
-
     <h2>Phones</h2>
     <?= \yii\grid\GridView::widget([
         'dataProvider' => new \yii\data\ActiveDataProvider([

@@ -238,7 +238,6 @@ class CustomerRecordSearch extends CustomerRecord
                                 ->where(['value' => 10]);
 
         $query->select(['customer.id', 'customer.name', 'domain.name AS domainName', 'paymentStatus' => $subQuery])
-            //->from('customer')
             ->innerjoin('domain', 'domain.customer_id = customer.id')
             ->where(['customer.created_by' => $params['seller_user_id']])
             ->andWhere(['domain.payment_status_value' => 10])

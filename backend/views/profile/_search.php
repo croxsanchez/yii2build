@@ -21,7 +21,7 @@ use backend\models\Profile;
     
 <?= $form->field($model, 'last_name') ?>
     
-<?= $form->field($model, 'birthdate') ?>
+<?= $form->field($model, 'birth_date') ?>
     
 <?= $form->field($model, 'gender_id')->dropDownList(Profile::getgenderList(),
         [ 'prompt' => 'Please Choose One' ]);?>

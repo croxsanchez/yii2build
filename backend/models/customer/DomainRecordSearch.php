@@ -6,12 +6,16 @@ use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use backend\models\customer\DomainRecord;
+use yii\db\Query;
 
 /**
  * DomainRecordSearch represents the model behind the search form about `backend\models\customer\DomainRecord`.
  */
 class DomainRecordSearch extends DomainRecord
 {
+    public $customerName;
+    public $paymentStatus;
+    
     /**
      * @inheritdoc
      */
@@ -73,6 +77,114 @@ class DomainRecordSearch extends DomainRecord
         ]);
 
         $query->andFilterWhere(['like', 'name', $this->name]);
+
+        return $dataProvider;
+    }
+    
+        public function searchMyPendingForPayment($params)
+    {
+        $query = DomainRecordSearch::find();
+
+        $dataProvider = (new ActiveDataProvider([
+            'query' => $query,
+            'pagination' => [
+                    'pageSize' => 10,
+                ],
+            ]));
+
+        $dataProvider->setSort([
+            'attributes' => [
+                'id' => [
+                    'asc' => ['id' => SORT_ASC],
+                    'desc' => ['id' => SORT_DESC],
+                    'label' => 'Id'
+                ],
+                'customer_id' => [
+                    'asc' => ['customer_id' => SORT_ASC],
+                    'desc' => ['customer_id' => SORT_DESC],
+                    'label' => 'Customer Id'
+                ],
+                'customerName' => [
+                    'asc' => ['customer.name' => SORT_ASC],
+                    'desc' => ['customer.name' => SORT_DESC],
+                    'label' => 'Full Name'
+                ],
+                'name' => [
+                    'asc' => ['domain.name' => SORT_ASC],
+                    'desc' => ['domain.name' => SORT_DESC],
+                    'label' => 'Domain Name'
+                ],
+                'paymentStatus' => [
+                    'asc' => ['domain.payment_status_value' => SORT_ASC],
+                    'desc' => ['domain.payment_status_value' => SORT_DESC],
+                    'label' => 'Payment Status'
+                ],
+            ]
+        ]);
+
+
+        $subQuery = (new Query())->select('name')
+                                ->from('payment_status')
+                                ->where(['value' => 20]);
+
+        $query->select(['domain.id AS id', 'customer_id', 'customer.name AS customerName', 'domain.name', 'paymentStatus' => $subQuery])
+            ->innerjoin('customer', 'domain.customer_id = customer.id')
+            ->where(['domain.created_by' => $params['seller_user_id']])
+            ->andWhere(['payment_status_value' => 10])
+            ->all();
+
+        $this->load($params);
+
+        return $dataProvider;
+    }
+    
+    public function searchMyPaidOutDomains($params)
+    {
+        $query = DomainRecordSearch::find();
+
+        $dataProvider = (new ActiveDataProvider([
+            'query' => $query,
+            'pagination' => [
+                    'pageSize' => 10,
+                ],
+            ]));
+
+        $dataProvider->setSort([
+            'attributes' => [
+                'id' => [
+                    'asc' => ['domain.id' => SORT_ASC],
+                    'desc' => ['domain.id' => SORT_DESC],
+                    'label' => 'Domain Id'
+                ],
+                'name' => [
+                    'asc' => ['domain.name' => SORT_ASC],
+                    'desc' => ['domain.name' => SORT_DESC],
+                    'label' => 'Domain Name'
+                ],
+                'customerName' => [
+                    'asc' => ['customer.name' => SORT_ASC],
+                    'desc' => ['customer.name' => SORT_DESC],
+                    'label' => 'Full Name'
+                ],
+                'paymentStatus' => [
+                    'asc' => ['domain.payment_status_value' => SORT_ASC],
+                    'desc' => ['domain.payment_status_value' => SORT_DESC],
+                    'label' => 'Payment Status'
+                ],
+            ]
+        ]);
+
+        $subQuery = (new Query())->select('name')
+                                ->from('payment_status')
+                                ->where(['value' => 20]);
+
+        $query->select(['domain.id', 'domain.name', 'customer.name AS customerName', 'paymentStatus' => $subQuery])
+            ->innerjoin('customer', 'domain.customer_id = customer.id')
+            ->where(['domain.created_by' => $params['seller_user_id']])
+            ->andWhere(['domain.payment_status_value' => 20])
+            ->all();
+
+        $this->load($params);
 
         return $dataProvider;
     }

@@ -39,7 +39,7 @@ echo Collapse::widget([
             //'user_id',
             'first_name:ntext',
             'last_name',
-            'birthdate',
+            'birth_date',
             'genderName',
             // 'gender_id',
             // 'created_at',
