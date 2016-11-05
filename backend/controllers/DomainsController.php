@@ -68,9 +68,31 @@ class DomainsController extends Controller
             PermissionHelpers::requireRole('Admin')
                     && PermissionHelpers::requireStatus('Active')){
             $searchModel = new DomainRecordSearch();
-            $dataProvider = $searchModel->searchMyDomainsPendingForFirstPayment();
+            $dataProvider = $searchModel->searchDomainsPendingForFirstPayment();
 
             return $this->render('domains-pending-for-first-payment', [
+                    'searchModel'  => $searchModel,
+                    'dataProvider' => $dataProvider,
+                ]);
+
+        } else {
+            throw new NotFoundHttpException('You\'re not allowed to enter this view.');
+        }
+    }
+
+    /**
+     * Displays the list of customers with domains pending for payment
+     * for the current seller.
+     */
+    public function actionListTemporaryDomains()
+    {
+        if (!Yii::$app->user->isGuest &&
+            PermissionHelpers::requireRole('Admin')
+                    && PermissionHelpers::requireStatus('Active')){
+            $searchModel = new DomainRecordSearch();
+            $dataProvider = $searchModel->searchTemporaryDomains();
+
+            return $this->render('list-temporary-domains', [
                     'searchModel'  => $searchModel,
                     'dataProvider' => $dataProvider,
                 ]);
@@ -84,15 +106,15 @@ class DomainsController extends Controller
      * Displays the list of customers with domains already paid out
      * for the current seller.
      */
-    public function actionDomainsPaidOut($seller_user_id)
+    public function actionListPublishedDomains($seller_user_id)
     {
         if (!Yii::$app->user->isGuest &&
             PermissionHelpers::requireRole('Seller')
                     && PermissionHelpers::requireStatus('Active')){
             $searchModel = new DomainRecordSearch();
-            $dataProvider = $searchModel->searchMyPaidOutDomains(Yii::$app->request->queryParams);
+            $dataProvider = $searchModel->searchMyPublishedDomains(Yii::$app->request->queryParams);
 
-            return $this->render('paid-out', [
+            return $this->render('published-domains', [
                     'searchModel'  => $searchModel,
                     'dataProvider' => $dataProvider,
                 ]);

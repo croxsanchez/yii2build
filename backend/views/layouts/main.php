@@ -112,9 +112,9 @@ FontAwesomeAsset::register($this);
                     ]
                 ],
                 [
-                    'label' => 'Sites Already Paid',
+                    'label' => 'List Published Sites',
                     'url' => [
-                        'domains/domains-paid-out',
+                        'domains/list-published-domains',
                         'seller_user_id' => Yii::$app->user->id,
                         'tag' => 'paid'
                     ]
@@ -156,6 +156,13 @@ FontAwesomeAsset::register($this);
                     'url' => [
                         'domains/domains-pending-for-first-payment',
                         'tag' => 'pending_first_payment'
+                    ]
+                ],
+                [
+                    'label' => 'Temporary Sites to be Assigned',
+                    'url' => [
+                        'domains/list-temporary-domains',
+                        'tag' => 'temporary'
                     ]
                 ],
             ]
