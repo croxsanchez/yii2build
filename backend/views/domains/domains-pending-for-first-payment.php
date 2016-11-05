@@ -10,7 +10,7 @@ use yii\grid\GridView;
 $this->title = 'Sites Pending for Payment';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="customer-record-index">
+<div class="domain-record-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
     <?= GridView::widget([
@@ -28,6 +28,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attribute' => 'name',
                 'label' => 'Domain Name',
             ],
+            'domainChoiceOrder',
             'paymentStatus',
             [
                 'class' => 'yii\grid\ActionColumn',

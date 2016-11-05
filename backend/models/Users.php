@@ -39,6 +39,7 @@ class Users extends ActiveRecord implements IdentityInterface
     const STATUS_ACTIVE = 10;
     
     public $password;
+    public $confirm_password;
 
     public static function tableName() {
         return 'user';
@@ -82,7 +83,10 @@ class Users extends ActiveRecord implements IdentityInterface
             
             ['password', 'required'],
             ['password', 'string', 'min' => 6],
-               
+            ['password', 'passwordCriteria'],
+            ['confirm_password', 'string', 'min' => 6],
+            [['confirm_password'], 'compare', 'compareAttribute' => 'password'],
+            
         ];
     }
 
@@ -100,7 +104,29 @@ class Users extends ActiveRecord implements IdentityInterface
             'userTypeId' => Yii::t('app', 'User Type'),
             'userIdLink' => Yii::t('app', 'ID'),
             'password' => Yii::t('app', 'Password'),
+            'confirm_password' => Yii::t('app', 'Confirm Password'),
         ];
+    }
+    
+    /*
+     * Función para validar criterios adicionales en la cadena de password
+     * REVISAR CON CUIDADO PARA COLOCAR CRITERIOS COMPLETOS
+     */
+    public function passwordCriteria()
+    {
+        if(!empty($this->password)){
+            if(strlen($this->password)<6){
+                $this->addError('password','Password must contains at least six letters, one digit and one character.');
+            }
+            else{
+                if(!preg_match('/[0-9]/',$this->password)){
+                    $this->addError('password','Password must contain at least one digit.');
+                }
+                if(!preg_match('/[a-zA-Z]/', $this->password)){
+                    $this->addError('password','Password must contain at least one character.');
+                }
+            }
+        }
     }
     
     /**
@@ -113,6 +139,9 @@ class Users extends ActiveRecord implements IdentityInterface
         $user = new User();
         $user->username = $this->username;
         $user->email = $this->email;
+        $user->status_id = $this->status_id;
+        $user->role_id = $this->role_id;
+        $user->user_type_id = $this->user_type_id;
         $user->setPassword($this->password);
         $user->generateAuthKey();
 
@@ -174,6 +203,14 @@ class Users extends ActiveRecord implements IdentityInterface
     */
     public function getAuthKey(){
         return $this->auth_key;
+    }
+    
+    /**
+    * @getPassword
+    */
+    public function getPassword(){
+        $this->confirm_password = $this->password_hash;
+        return $this->password_hash;
     }
     
     /**

@@ -81,7 +81,68 @@ class DomainRecordSearch extends DomainRecord
         return $dataProvider;
     }
     
-        public function searchMyPendingForPayment($params)
+    public function searchMyDomainsPendingForFirstPayment()
+    {
+        $query = DomainRecordSearch::find();
+
+        $dataProvider = (new ActiveDataProvider([
+            'query' => $query,
+            'pagination' => [
+                    'pageSize' => 10,
+                ],
+            ]));
+
+        $dataProvider->setSort([
+            'attributes' => [
+                'id' => [
+                    'asc' => ['id' => SORT_ASC],
+                    'desc' => ['id' => SORT_DESC],
+                    'label' => 'Id'
+                ],
+                'customer_id' => [
+                    'asc' => ['customer_id' => SORT_ASC],
+                    'desc' => ['customer_id' => SORT_DESC],
+                    'label' => 'Customer Id'
+                ],
+                'customerName' => [
+                    'asc' => ['customer.name' => SORT_ASC],
+                    'desc' => ['customer.name' => SORT_DESC],
+                    'label' => 'Full Name'
+                ],
+                'name' => [
+                    'asc' => ['domain.name' => SORT_ASC],
+                    'desc' => ['domain.name' => SORT_DESC],
+                    'label' => 'Domain Name'
+                ],
+                'domainChoiceOrder' => [
+                    'asc' => ['domain.domain_choice_value' => SORT_ASC],
+                    'desc' => ['domain.domain_choice_value' => SORT_DESC],
+                    'label' => 'Domain domain_choice_value'
+                ],
+                'paymentStatus' => [
+                    'asc' => ['domain.payment_status_value' => SORT_ASC],
+                    'desc' => ['domain.payment_status_value' => SORT_DESC],
+                    'label' => 'Payment Status'
+                ],
+            ]
+        ]);
+
+
+        $subQuery = (new Query())->select('name')
+                                ->from('payment_status')
+                                ->where(['value' => 10]);
+
+        $query->select(['domain.id AS id', 'customer_id', 'customer.name AS customerName', 'domain.name','domain.domain_choice_value' ,'paymentStatus' => $subQuery])
+            ->innerjoin('customer', 'domain.customer_id = customer.id')
+            ->where(['payment_status_value' => 10])
+            ->all();
+
+        //$this->load($params);
+
+        return $dataProvider;
+    }
+    
+    public function searchMyDomainsForDevelopment($params)
     {
         $query = DomainRecordSearch::find();
 
@@ -123,14 +184,15 @@ class DomainRecordSearch extends DomainRecord
         ]);
 
 
-        $subQuery = (new Query())->select('name')
-                                ->from('payment_status')
-                                ->where(['value' => 20]);
+        /*$subQuery = (new Query())->select('name')
+                                ->from('domain_status')
+                                ->where(['value' => 20]);*/
 
-        $query->select(['domain.id AS id', 'customer_id', 'customer.name AS customerName', 'domain.name', 'paymentStatus' => $subQuery])
+        $query->select(['domain.id AS id', 'customer_id', 'customer.name AS customerName', 'domain.name'])
             ->innerjoin('customer', 'domain.customer_id = customer.id')
             ->where(['domain.created_by' => $params['seller_user_id']])
-            ->andWhere(['payment_status_value' => 10])
+            ->andWhere(['payment_status_value' => 20])
+            ->innerJoin(['ds' => 'domain_status'], 'domain.domain_status_value = ds.value')
             ->all();
 
         $this->load($params);

@@ -35,13 +35,16 @@ FontAwesomeAsset::register($this);
 
 <div class="wrap">
     <?php
+    $is_superuser = ValueHelpers::getRoleValue('Superuser');
     $is_admin = ValueHelpers::getRoleValue('Admin');
     $is_seller = ValueHelpers::getRoleValue('Seller');
+    $is_designer = ValueHelpers::getRoleValue('Designer');
+    
 
     if (!Yii::$app->user->isGuest){
-        if (!Yii::$app->user->identity->role_id >= $is_seller){
+        if (Yii::$app->user->identity->role_id >= $is_admin){
             $title = 'BcauseNet <i class="fa fa-plug"></i> Admin';
-        } else {
+        } elseif (Yii::$app->user->identity->role_id == $is_seller) {
             $title = 'BcauseNet <i class="fa fa-plug"></i> Your Business';
         }
         NavBar::begin([
@@ -61,14 +64,14 @@ FontAwesomeAsset::register($this);
         ]);
     }
 
-    if (!Yii::$app->user->isGuest && Yii::$app->user->identity->role_id >= $is_seller) {
+    if (!Yii::$app->user->isGuest && Yii::$app->user->identity->role_id >= $is_designer) {
         $menuItems = [
             ['label' => 'Home', 'url' => ['/site/index']],
         ];
     }
 
 
-    if (!Yii::$app->user->isGuest && Yii::$app->user->identity->role_id >= $is_admin) {
+    if (!Yii::$app->user->isGuest && Yii::$app->user->identity->role_id >= $is_superuser) {
         $menuItems[] = ['label' => 'Users', 'url' => ['user/index']];
         $menuItems[] = ['label' => 'Profiles', 'url' => ['profile/index']];
         $menuItems[] = ['label' => 'Customers', 'url' => ['customer-records/index']];
@@ -101,11 +104,11 @@ FontAwesomeAsset::register($this);
             'label' => 'Site Manager',
             'items' => [
                 [
-                    'label' => 'Sites Pending for Payment',
+                    'label' => 'Sites for Development',
                     'url' => [
-                        'domains/domains-pending-payment',
+                        'domains/domains-for-development',
                         'seller_user_id' => Yii::$app->user->id,
-                        'tag' => 'pending'
+                        'tag' => 'development'
                     ]
                 ],
                 [
@@ -140,6 +143,19 @@ FontAwesomeAsset::register($this);
                     'url' => [
                         'seller/index',
                         'tag' => 'statistics'
+                    ]
+                ],
+            ]
+        ];
+    } elseif(!Yii::$app->user->isGuest && Yii::$app->user->identity->role_id == $is_admin) {
+        $menuItems[] = [
+            'label' => 'Site Manager',
+            'items' => [
+                [
+                    'label' => 'Sites Pending First Payment',
+                    'url' => [
+                        'domains/domains-pending-for-first-payment',
+                        'tag' => 'pending_first_payment'
                     ]
                 ],
             ]

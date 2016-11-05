@@ -62,15 +62,15 @@ class DomainsController extends Controller
      * Displays the list of customers with domains pending for payment
      * for the current seller.
      */
-    public function actionDomainsPendingPayment($seller_user_id)
+    public function actionDomainsPendingForFirstPayment()
     {
         if (!Yii::$app->user->isGuest &&
-            PermissionHelpers::requireRole('Seller')
+            PermissionHelpers::requireRole('Admin')
                     && PermissionHelpers::requireStatus('Active')){
             $searchModel = new DomainRecordSearch();
-            $dataProvider = $searchModel->searchMyPendingForPayment(Yii::$app->request->queryParams);
+            $dataProvider = $searchModel->searchMyDomainsPendingForFirstPayment();
 
-            return $this->render('pending-for-payment', [
+            return $this->render('domains-pending-for-first-payment', [
                     'searchModel'  => $searchModel,
                     'dataProvider' => $dataProvider,
                 ]);
@@ -93,6 +93,28 @@ class DomainsController extends Controller
             $dataProvider = $searchModel->searchMyPaidOutDomains(Yii::$app->request->queryParams);
 
             return $this->render('paid-out', [
+                    'searchModel'  => $searchModel,
+                    'dataProvider' => $dataProvider,
+                ]);
+
+        } else {
+            throw new NotFoundHttpException('You\'re not allowed to enter this view.');
+        }
+    }
+
+    /**
+     * Displays the list of customers with domains pending for payment
+     * for the current seller.
+     */
+    public function actionDomainsForDevelopment($seller_user_id)
+    {
+        if (!Yii::$app->user->isGuest &&
+            PermissionHelpers::requireRole('Seller')
+                    && PermissionHelpers::requireStatus('Active')){
+            $searchModel = new DomainRecordSearch();
+            $dataProvider = $searchModel->searchMyDomainsForDevelopment(Yii::$app->request->queryParams);
+
+            return $this->render('domains-for-development', [
                     'searchModel'  => $searchModel,
                     'dataProvider' => $dataProvider,
                 ]);

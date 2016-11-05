@@ -18,14 +18,19 @@ use yii\widgets\ActiveForm;
     <?= $form->field($model, 'role_id')->dropDownList($model->roleList,
             [ 'prompt' => 'Please Choose One' ]);?>
     
-    <?= $form->field($model, 'user_type_id')->dropDownList($model->userTypeList,
-            [ 'prompt' => 'Please Choose One' ]);?>
+    <?= Html::activeHiddenInput($model, 'user_type_id', ['value' => 30]);?>
     
     <?= $form->field($model, 'username')->textInput(['maxlength' => 255]) ?>
     
     <?= $form->field($model, 'email')->textInput(['maxlength' => 255]) ?>
     
+    <?php if ($model->isNewRecord): ?>
+    
     <?= $form->field($model, 'password')->passwordInput(['maxlength' => 255]) ?>
+    
+    <?= $form->field($model, 'confirm_password')->passwordInput(['maxlength' => 255]) ?>
+    
+    <?php endif;?>
     
     <div class="form-group">
     

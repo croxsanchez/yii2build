@@ -7,10 +7,10 @@ use yii\grid\GridView;
 /* @var $searchModel backend\models\customer\CustomerRecordSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Sites Pending for Payment';
+$this->title = 'Sites for Development';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="customer-record-index">
+<div class="domain-record-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
     <?= GridView::widget([
@@ -28,7 +28,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attribute' => 'name',
                 'label' => 'Domain Name',
             ],
-            'paymentStatus',
+            //'paymentStatus',
             [
                 'class' => 'yii\grid\ActionColumn',
                 'header' => 'Update Info',
