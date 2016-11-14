@@ -116,6 +116,11 @@ class CustomerRecord extends ActiveRecord
         ];
     }
     
+    public function getWebsites()
+    {
+        return $this->hasMany(Website::className(), ['customer_id' => 'id']);
+    }
+
     public function getDomains()
     {
         return $this->hasMany(DomainRecord::className(), ['customer_id' => 'id']);

@@ -23,10 +23,10 @@ use backend\models\Profile;
     
 <?= $form->field($model, 'birth_date') ?>
     
-<?= $form->field($model, 'gender_id')->dropDownList(Profile::getgenderList(),
-        [ 'prompt' => 'Please Choose One' ]);?>
+<?php //echo $form->field($model, 'gender_id')->dropDownList(Profile::getgenderList(),
+      //  [ 'prompt' => 'Please Choose One' ]);?>
     
-    <?php // echo $form->field($model, 'created_at') ?>
+    <?php  echo $form->field($model, 'created_at') ?>
 
     <?php // echo $form->field($model, 'updated_at') ?>
 

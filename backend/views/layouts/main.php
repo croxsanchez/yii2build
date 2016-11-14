@@ -106,15 +106,15 @@ FontAwesomeAsset::register($this);
                 [
                     'label' => 'Sites for Development',
                     'url' => [
-                        'domains/domains-for-development',
+                        'website/websites-for-development',
                         'seller_user_id' => Yii::$app->user->id,
                         'tag' => 'development'
                     ]
                 ],
                 [
-                    'label' => 'List Published Sites',
+                    'label' => 'List Published Websites',
                     'url' => [
-                        'domains/list-published-domains',
+                        'website/list-published-websites',
                         'seller_user_id' => Yii::$app->user->id,
                         'tag' => 'paid'
                     ]
@@ -154,15 +154,15 @@ FontAwesomeAsset::register($this);
                 [
                     'label' => 'Sites Pending First Payment',
                     'url' => [
-                        'domains/domains-pending-for-first-payment',
+                        'website/websites-pending-for-first-payment',
                         'tag' => 'pending_first_payment'
                     ]
                 ],
                 [
-                    'label' => 'Temporary Sites to be Assigned',
+                    'label' => 'Sites to be Assigned',
                     'url' => [
-                        'domains/list-temporary-domains',
-                        'tag' => 'temporary'
+                        'website/websites-for-development',
+                        'tag' => 'assign_website'
                     ]
                 ],
             ]

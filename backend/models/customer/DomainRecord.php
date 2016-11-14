@@ -13,7 +13,6 @@ use backend\models\customer\ThemeRecord;
 use backend\models\customer\DomainChoiceRecord;
 use backend\models\customer\DomainStatusRecord;
 use backend\models\PaymentStatus;
-use backend\models\PaymentMethod;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -25,7 +24,6 @@ use yii\helpers\ArrayHelper;
  * @property integer $domain_choice_value
  * @property integer $payment_status_value
  * @property integer $domain_status_value
- * @property integer $theme_id
  * @property string $created_at
  * @property integer $created_by
  * @property string $updated_at
@@ -54,19 +52,16 @@ class DomainRecord extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name', 'customer_id', 'theme_id', 'payment_status_value', 'payment_method_value'], 'required'],
-            [['customer_id', 'domain_choice_value', 'payment_status_value', 'payment_method_value', 'domain_status_value', 'theme_id'], 'integer'],
+            [['name', 'customer_id', 'payment_status_value'], 'required'],
+            [['customer_id', 'domain_choice_value', 'payment_status_value', 'domain_status_value'], 'integer'],
             [['created_at', 'updated_at'], 'safe'],
             [['name'], 'string', 'max' => 255],
             [['domain_choice_value'], 'exist', 'skipOnError' => true, 'targetClass' => DomainChoiceRecord::className(), 'targetAttribute' => ['domain_choice_value' => 'value']],
             [['domain_choice_value'],'in', 'range'=>array_keys($this->getDomainChoiceList())],
             [['payment_status_value'], 'exist', 'skipOnError' => true, 'targetClass' => PaymentStatus::className(), 'targetAttribute' => ['payment_status_value' => 'value']],
             [['payment_status_value'],'in', 'range'=>array_keys($this->getPaymentStatusList())],
-            [['payment_method_value'], 'exist', 'skipOnError' => true, 'targetClass' => PaymentMethod::className(), 'targetAttribute' => ['payment_method_value' => 'value']],
-            [['payment_method_value'],'in', 'range'=>array_keys($this->getPaymentMethodList())],
             [['created_by'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['created_by' => 'id']],
             [['customer_id'], 'exist', 'skipOnError' => true, 'targetClass' => CustomerRecord::className(), 'targetAttribute' => ['customer_id' => 'id']],
-            [['theme_id'], 'exist', 'skipOnError' => true, 'targetClass' => ThemeRecord::className(), 'targetAttribute' => ['theme_id' => 'id']],
             [['updated_by'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['updated_by' => 'id']],
         ];
     }
@@ -84,7 +79,6 @@ class DomainRecord extends \yii\db\ActiveRecord
             'domainChoiceOrder' => Yii::t('app', 'Domain Name Preference'),
             'payment_status_value' => 'Payment Status',
             'domain_status_value' => 'Domain Status',
-            'theme_id' => 'Site Theme',
             'created_at' => 'Created At',
             'created_by' => 'Created By',
             'updated_at' => 'Updated At',
@@ -149,6 +143,15 @@ class DomainRecord extends \yii\db\ActiveRecord
     }
 
     /**
+    * set domain choice value
+    *
+    */
+    public function setDomainChoiceValue($value)
+    {
+         $this->domain_choice_value = $value;
+    }
+    
+    /**
     * get domain choice
     *
     */
@@ -171,6 +174,15 @@ class DomainRecord extends \yii\db\ActiveRecord
     public static function getDomainChoiceList(){
         $droptions = DomainChoiceRecord::find()->asArray()->all();
         return Arrayhelper::map($droptions, 'value', 'order');
+    }
+    
+    /**
+    * set domain status value
+    *
+    */
+    public function setDomainStatusValue($value)
+    {
+         $this->domain_status_value = $value;
     }
     
     /**
@@ -199,36 +211,12 @@ class DomainRecord extends \yii\db\ActiveRecord
     }
     
     /**
-    * get theme ID
+    * set payment status value
     *
     */
-    public function getThemeId()
+    public function setPaymentStatusValue($value)
     {
-         return $this->hasOne(ThemeRecord::className(), ['theme_id' => 'id']);
-    }
-    
-    /**
-    * get theme name
-    *
-    */
-    public function getThemeName(){
-        return $this->themeId ? $this->themeId->name : '- no theme -';
-    }
-    
-    /**
-    * get list of domain choices for dropdown
-    */
-    public static function getThemeList(){
-        $droptions = ThemeRecord::find()->asArray()->all();
-        return Arrayhelper::map($droptions, 'id', 'name');
-    }
-    
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getDomainThemes()
-    {
-        return $this->hasMany(DomainThemeRecord::className(), ['domain_id' => 'id']);
+         $this->payment_status_value = $value;
     }
     
     /**
@@ -254,30 +242,5 @@ class DomainRecord extends \yii\db\ActiveRecord
     public static function getPaymentStatusList(){
         $droptions = PaymentStatus::find()->asArray()->all();
         return Arrayhelper::map($droptions, 'value', 'name');
-    }
-    
-    /**
-    * get payment method
-    *
-    */
-    public function getPaymentMethod()
-    {
-         return $this->hasOne(PaymentMethod::className(), ['payment_method_value' => 'value']);
-    }
-    
-    /**
-    * get payment method name
-    *
-    */
-    public function getPaymentMethodName(){
-        return $this->paymentMethod ? $this->paymentMethod->name : '- no payment method assigned -';
-    }
-    
-    /**
-    * get list of payment methods for dropdown
-    */
-    public static function getPaymentMethodList(){
-        $droptions = PaymentMethod::find()->asArray()->all();
-        return Arrayhelper::map($droptions, 'value', 'type');
     }
 }

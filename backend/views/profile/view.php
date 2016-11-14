@@ -11,7 +11,7 @@ $this->title = $model->first_name . ' ' . $model->last_name;
 $this->params['breadcrumbs'][] = ['label' => 'Profiles', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 
-$show_this_for_admin = PermissionHelpers::requireRole('SuperUser');
+$show_this_for_admin = PermissionHelpers::requireRole('Superuser');
 $show_this_for_seller = PermissionHelpers::requireRole('Seller');
 ?>
 <div class="profile-view">
@@ -59,7 +59,7 @@ $show_this_for_seller = PermissionHelpers::requireRole('Seller');
                 'attributes' => [
                 ['attribute'=>'userLink', 'format'=>'raw'],
                 'id',
-                'user_id',
+                'seller_id',
                 'first_name:ntext',
                 'last_name',
                 'email',

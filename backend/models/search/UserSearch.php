@@ -23,7 +23,6 @@ class UserSearch extends User
     public $user_type_name;
     public $user_type_id;
     public $statusName;
-    public $profileId;
 
     /**
      * @inheritdoc
@@ -33,7 +32,7 @@ class UserSearch extends User
         return [
             [['id', 'role_id', 'user_type_id', 'status_id'], 'integer'],
             [['username', 'email', 'created_at', 'updated_at','roleName', 'statusName',
-                 'userTypeName', 'profileId', 'user_type_name'], 'safe'],
+                 'userTypeName', 'user_type_name'], 'safe'],
         ];
     }
 
@@ -81,11 +80,6 @@ class UserSearch extends User
                     'desc' => ['user.username' => SORT_DESC],
                     'label' => 'User'
                 ],
-                'profileLink' => [
-                    'asc' => ['profile.id' => SORT_ASC],
-                    'desc' => ['profile.id' => SORT_DESC],
-                    'label' => 'Profile'
-                ],
                 'roleName' => [
                     'asc' => ['role.role_name' => SORT_ASC],
                     'desc' => ['role.role_name' => SORT_DESC],
@@ -119,7 +113,6 @@ class UserSearch extends User
 
             $query->joinWith(['role'])
                     ->joinWith(['status'])
-                    ->joinWith(['profile'])
                     ->joinWith(['userType']);
 
             return $dataProvider;

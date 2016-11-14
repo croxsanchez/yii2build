@@ -7,10 +7,10 @@ use yii\grid\GridView;
 /* @var $searchModel backend\models\customer\CustomerRecordSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'My Published Sites';
+$this->title = 'My Published Websites';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="customer-record-index">
+<div class="website-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
     <?= GridView::widget([
@@ -23,7 +23,14 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attribute' => 'name',
                 'label' => 'Domain Name',
             ],
-            'customerName',
+            [
+                'attribute' => 'description',
+                'label' => 'Website Description',
+            ],
+            [
+                'attribute' => 'customerName',
+                'label' => 'Customer Name',
+            ],
             'paymentStatus',
             [
                 'class' => 'yii\grid\ActionColumn',

@@ -35,7 +35,6 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= DetailView::widget([
             'model' => $model,
             'attributes' => [
-                ['attribute'=>'profileLink', 'format'=>'raw'],
                 
                 //'username',
                 //'auth_key',

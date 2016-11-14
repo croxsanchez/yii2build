@@ -5,13 +5,13 @@ namespace backend\models\search;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use frontend\models\Profile;
+use backend\models\Profile;
 
 class ProfileSearch extends Profile
 {
-    public $genderName;
-    public $gender_id;
-    public $userId;
+    /*public $genderName;
+    public $gender_id;*/
+    public $sellerId;
     public function rules()
     {
         return [
@@ -43,11 +43,11 @@ class ProfileSearch extends Profile
                 'first_name',
                 'last_name',
                 'birth_date',
-                'genderName' => [
+                /*'genderName' => [
                     'asc' => ['gender.gender_name' => SORT_ASC],
                     'desc' => ['gender.gender_name' => SORT_DESC],
                     'label' => 'Gender'
-                ],
+                ],*/
                 'profileIdLink' => [
                     'asc' => ['profile.id' => SORT_ASC],
                     'desc' => ['profile.id' => SORT_DESC],
@@ -62,8 +62,8 @@ class ProfileSearch extends Profile
         ]);
         
         if (!($this->load($params) && $this->validate())) {
-            $query->joinWith(['gender'])
-                    ->joinWith(['user']);
+            $query/*->joinWith(['gender'])*/
+                    ->joinWith(['seller']);
             return $dataProvider;
         }
         
@@ -71,19 +71,19 @@ class ProfileSearch extends Profile
         $this->addSearchParameter($query, 'first_name', true);
         $this->addSearchParameter($query, 'last_name', true);
         $this->addSearchParameter($query, 'birth_date');
-        $this->addSearchParameter($query, 'gender_id');
+        //$this->addSearchParameter($query, 'gender_id');
         $this->addSearchParameter($query, 'created_at');
         $this->addSearchParameter($query, 'updated_at');
-        $this->addSearchParameter($query, 'user_id');
+        $this->addSearchParameter($query, 'seller_id');
    
         // filter by gender name
-        $query->joinWith(['gender' => function ($q) {
+        $query/*->joinWith(['gender' => function ($q) {
             $q->where('gender.gender_name LIKE "%' . $this->genderName . '%"');
-        }])
+        }])*/
         
         // filter by profile
-            ->joinWith(['user' => function ($q) {
-                $q->where('user.id LIKE "%' . $this->userId . '%"');
+            ->joinWith(['seller' => function ($q) {
+                $q->where('seller.id LIKE "%' . $this->sellerId . '%"');
             }]);
             
         return $dataProvider;

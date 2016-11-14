@@ -5,7 +5,7 @@ use yii\grid\GridView;
 use \yii\bootstrap\Collapse;
 
 /* @var $this yii\web\View */
-/* @var $searchModel backend\models\ProfileSearch */
+/* @var $searchModel backend\models\search\ProfileSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Profiles';
@@ -37,6 +37,7 @@ echo Collapse::widget([
             ['attribute'=>'profileIdLink', 'format'=>'raw'],
             ['attribute'=>'userLink', 'format'=>'raw'],
             //'user_id',
+            'seller_id',
             'first_name:ntext',
             'last_name',
             'birth_date',

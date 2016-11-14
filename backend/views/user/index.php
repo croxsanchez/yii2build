@@ -45,7 +45,6 @@ if (PermissionHelpers::requireMinimumRole('Admin') && PermissionHelpers::require
         //'id',
         ['attribute'=>'userIdLink', 'format'=>'raw'],
         ['attribute'=>'userLink', 'format'=>'raw'],
-        ['attribute'=>'profileLink', 'format'=>'raw'],
         'email:email',
         'roleName',
         'userTypeName',

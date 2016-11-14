@@ -19,9 +19,6 @@ use yii\widgets\ActiveForm;
     <?= $form->field($model, 'domain_choice_value')->dropDownList($model->domainChoiceList, 
             ['prompt' => 'Please choose one' ]); ?>
     
-    <?= $form->field($model, 'payment_method_value')->dropDownList($model->paymentMethodList, 
-            ['prompt' => 'Please choose one' ]); ?>
-    
     <?= $form->field($model, 'payment_status_value')->dropDownList($model->paymentStatusList, 
             ['prompt' => 'Please choose one' ]); ?>
     

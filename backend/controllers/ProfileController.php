@@ -13,6 +13,7 @@ use common\models\PermissionHelpers;
 use common\models\RecordHelpers;
 use yii\web\UploadedFile;
 use common\models\User;
+use backend\models\Seller;
 
 Yii::$app->params['uploadPath'] = Yii::$app->basePath . '/web/uploads/';
 Yii::$app->params['uploadUrl'] = Yii::$app->urlManager->baseUrl . '/web/uploads/';
@@ -68,7 +69,7 @@ class ProfileController extends Controller
      */
     public function actionIndex()
     {
-        if (PermissionHelpers::requireMinimumRole('Admin') 
+        if (PermissionHelpers::requireRole('Superuser') 
                 && PermissionHelpers::requireStatus('Active')){
             $searchModel = new ProfileSearch();
             $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -79,7 +80,8 @@ class ProfileController extends Controller
             ]);
         } elseif (PermissionHelpers::requireRole('Seller') 
                 && PermissionHelpers::requireStatus('Active')){
-            if ($already_exists = RecordHelpers::userHas('profile')) {
+            $seller_id = $this->getSellerId();
+            if ($already_exists = $this->sellerHasProfile($seller_id)) {
                 return $this->render('view', [
                     'model' => $this->findModel($already_exists),
                 ]);
@@ -96,11 +98,19 @@ class ProfileController extends Controller
      */
     public function actionView($id)
     {
-        if ((PermissionHelpers::requireMinimumRole('Admin') || PermissionHelpers::requireRole('Seller')) 
-                && PermissionHelpers::requireStatus('Active')){
-            return $this->render('view', [
-                'model' => $this->findModel($id),
-            ]);
+        if ($model = $this->findModel($id)){
+            $seller = Seller::findOne(['id' => $model->seller_id]);
+            if ((PermissionHelpers::requireRole('Superuser') || PermissionHelpers::requireRole('Seller')) 
+                    && PermissionHelpers::requireStatus('Active')
+                    && ( $seller->parent_id == Yii::$app->user->id 
+                            || $seller->user_id == Yii::$app->user->id 
+                            || PermissionHelpers::requireRole('Superuser'))){
+                return $this->render('view', [
+                    'model' => $this->findModel($id),
+                ]);
+            }
+        } else {
+            throw new NotFoundHttpException('Seller\'s Profile Not Found.');
         }
     }
 
@@ -114,22 +124,20 @@ class ProfileController extends Controller
         $this->storeReturnUrl();
         $model = new Profile();
         
-        $username = User::find()
-                ->select('username')
-                ->where(['id' => Yii::$app->user->identity->id])
-                ->scalar();
-
+        $username = $this->getUsername();
+        
         if (PermissionHelpers::requireRole('Seller') 
                 && PermissionHelpers::requireStatus('Active')){
-            $model->user_id = \Yii::$app->user->identity->id;
+            $seller_id = $this->getSellerId();
         
-            if ($already_exists = RecordHelpers::userHas('profile')) {
+            if ($already_exists = $this->sellerHasProfile($seller_id)) {
                 return $this->render('view', [
                     'model' => $this->findModel($already_exists),
                     ]);
             } elseif ($model->load(Yii::$app->request->post())){
                 // get the uploaded file instance. for multiple file uploads
                 // the following data will return an array
+                $model->seller_id = $seller_id;
                 $image = $model->uploadImage();
 
                 try {
@@ -139,8 +147,10 @@ class ProfileController extends Controller
                             $path = $model->getImageFile();
                             $image->saveAs($path);
                         }
-                        //return $this->redirect(['view', 'id' => $model->user_id]);
-                        return $this->redirect(['update', 'id' => $model->id]);
+                        return $this->redirect([
+                            'update', 
+                            'id' => $model->id, 
+                        ]);
                     }
                 } catch (Exception $ex) {
                     throw new HttpException(405, 'Error saving model');
@@ -149,6 +159,7 @@ class ProfileController extends Controller
                 return $this->render('create', [
                     'model' => $model,
                     'username' => $username,
+                    'seller_id' => $seller_id,
                     ]);
             }
         } elseif (PermissionHelpers::requireMinimumRole('Admin') 
@@ -173,9 +184,11 @@ class ProfileController extends Controller
     public function actionUpdate($id)
     {
         $this->storeReturnUrl();
-        if ((PermissionHelpers::requireRole('Seller') || PermissionHelpers::requireRole('Superuser'))
+        
+        if (PermissionHelpers::requireRole('Seller')
                 && PermissionHelpers::requireStatus('Active')){
-            if($model = Profile::find()->where(['user_id' =>Yii::$app->user->identity->id])->one()) {
+            $seller_id = $this->getSellerId();
+            if($model = Profile::find()->where(['seller_id' => $seller_id])->one()) {
                 $oldFile = $model->getImageFile();
                 $oldAvatar = $model->avatar;
                 $oldFileName = $model->filename;
@@ -203,6 +216,8 @@ class ProfileController extends Controller
                             } else {
                                 return $this->render('update', [
                                     'model' => $model,
+                                    'seller_id' => $seller_id,
+
                                 ]);
                             }
                         } catch (Exception $ex) {
@@ -214,20 +229,23 @@ class ProfileController extends Controller
                 } else {
                     return $this->render('update', [
                         'model' => $model,
+                        'seller_id' => $seller_id,
                         ]);
                 }
             } else {
                 throw new NotFoundHttpException('No Such Profile.');
             }
-        } elseif (PermissionHelpers::requireMinimumRole('Admin')
+        } elseif (PermissionHelpers::requireRole('Superuser')
                 && PermissionHelpers::requireStatus('Active')){
             $model = $this->findModel($id);
+            $seller_id = $model->seller_id;
 
             if ($model->load(Yii::$app->request->post()) && $model->save()) {
                 return $this->redirect(['view', 'id' => $model->id]);
             } else {
                 return $this->render('update', [
                     'model' => $model,
+                    'seller_id' => $seller_id,
                 ]);
             }
         }
@@ -278,5 +296,33 @@ class ProfileController extends Controller
     private function storeReturnUrl()
     {
         Yii::$app->user->returnUrl = Yii::$app->request->url;
+    }
+    
+        
+    private function sellerHasProfile($seller_id){
+        $connection = \Yii::$app->db;
+        $sql = "SELECT id FROM profile WHERE seller_id=:seller_id";
+        $command = $connection->createCommand($sql);
+        $command->bindValue(":seller_id", $seller_id);
+        $result = $command->queryOne();
+        if ($result == null) {
+            return false;
+        } else {
+            return $result['id'];
+        }
+    }
+    
+    private function getSellerId(){
+        return Seller::find()
+                ->select('id')
+                ->where(['user_id' => Yii::$app->user->identity->id])
+                ->scalar();
+    }
+    
+    private function getUsername(){
+        return User::find()
+                ->select('username')
+                ->where(['id' => Yii::$app->user->identity->id])
+                ->scalar();
     }
 }

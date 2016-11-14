@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
+use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $searchModel backend\models\customer\CustomerRecordSearch */
@@ -10,7 +11,7 @@ use yii\grid\GridView;
 $this->title = 'Sites Pending for First Payment';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="domain-record-index">
+<div class="website-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
     <?= GridView::widget([
@@ -20,19 +21,26 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'yii\grid\SerialColumn'],
             [
                 'attribute' => 'id',
-                'label' => 'Domain Id',
+                'label' => 'Website Id',
             ],
-            'customer_id',
+            //'customer_id',
             'customerName',
             [
-                'attribute' => 'name',
-                'label' => 'Domain Name',
+                'attribute' => 'description',
+                'label' => 'Website Description',
             ],
+            'name',
             'domainChoiceOrder',
             'paymentStatus',
             [
-                'class' => 'yii\grid\ActionColumn',
+                'class' => \yii\grid\ActionColumn::className(),
                 'header' => 'Update Info',
+                'controller' => 'website',
+                'urlCreator' => function ($action, $model, $key, $index) {
+                        if ($action === 'update') {
+                            return Url::toRoute(['send-to-development', 'id' => $model['id']]);
+                        }
+                    },
                 'template' => '{update}',
             ],
         ],

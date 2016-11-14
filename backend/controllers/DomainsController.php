@@ -189,6 +189,25 @@ class DomainsController extends Controller
     }
 
     /**
+     * Changes Domain Choices to a single Domain with "Development" status.
+     * @param integer $id
+     * @return mixed
+     */
+    public function actionChangeToDevelopment($id)
+    {
+        $model = $this->findModel($id);
+
+        // Set Domain to be First Choice
+        $model->setDomainChoiceValue(10);
+        // Set Payment Status to Paid 1
+        $model->setPaymentStatusValue(20);
+        // Set Domain Status to 'Development'
+        $model->setDomainStatusValue(20);
+
+        return $this->goBack();
+    }
+
+    /**
      * Deletes an existing DomainRecord model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id

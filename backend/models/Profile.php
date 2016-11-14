@@ -21,7 +21,7 @@ Yii::$app->params['uploadUrl'] = Yii::$app->urlManager->baseUrl . '/web/uploads/
  * This is the model class for table "profile".
  *
  * @property integer $id
- * @property integer $user_id
+ * @property integer $seller_id
  * @property string $first_name
  * @property string $last_name
  * @property integer $gender_id
@@ -32,6 +32,7 @@ Yii::$app->params['uploadUrl'] = Yii::$app->urlManager->baseUrl . '/web/uploads/
  * @property string $birth_date
  *
  * @property Gender $gender
+ * @property Seller $seller
  */
 class Profile extends ActiveRecord
 {
@@ -51,8 +52,8 @@ class Profile extends ActiveRecord
     public function rules()
     {
         return [
-            [['user_id'], 'required'],
-            [['user_id', 'gender_id'], 'integer'],
+            [['seller_id'], 'required'],
+            [['seller_id', 'gender_id'], 'integer'],
             [['created_at', 'updated_at', 'birth_date'], 'safe'],
             [['first_name', 'last_name'], 'string', 'max' => 45],
             [['birth_date'], 'date', 'format'=>'Y-m-d'],
@@ -62,7 +63,8 @@ class Profile extends ActiveRecord
             [['filename', 'avatar'], 'safe'],
             [['filename', 'avatar'], 'string', 'max' => 255],
             [['gender_id'], 'exist', 'skipOnError' => true, 'targetClass' => Gender::className(), 'targetAttribute' => ['gender_id' => 'id']],
-            [['gender_id'],'in', 'range'=>array_keys($this->getGenderList())]
+            [['gender_id'],'in', 'range'=>array_keys($this->getGenderList())],
+            [['seller_id'], 'exist', 'skipOnError' => true, 'targetClass' => Seller::className(), 'targetAttribute' => ['seller_id' => 'id']],
         ];
     }
 
@@ -73,7 +75,7 @@ class Profile extends ActiveRecord
     {
         return [
             'id' => 'ID',
-            'user_id' => 'User ID',
+            'seller_id' => 'Seller ID',
             'first_name' => 'First Name',
             'last_name' => 'Last Name',
             'gender_id' => 'Gender ID',
@@ -112,9 +114,29 @@ class Profile extends ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
+    public function getPhones($seller_id)
+    {
+        $query = SellerPhone::find()
+                ->where(['seller_id' => $seller_id]);
+        return $query;
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getSellerPhones()
     {
         return $this->hasMany(SellerPhone::className(), ['seller_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getAddresses($seller_id)
+    {
+        $query = SellerAddress::find()
+                ->where(['seller_id' => $seller_id]);
+        return $query;
     }
 
     /**
@@ -151,47 +173,54 @@ class Profile extends ActiveRecord
     }
 
     /**
+    * @get Email
+    */
+    public function getEmail(){
+        return User::find()->select('email')->where(['id'=> $this->seller->user_id ])->scalar();
+    }
+    
+    /**
     * @return \yii\db\ActiveQuery
     */
-    public function getUser(){
-        return $this->hasOne(User::className(), ['id' => 'user_id']);
+    public function getSeller(){
+        return $this->hasOne(Seller::className(), ['id' => 'seller_id']);
+    }
+    
+    /**
+    * @getSellerId
+    */
+    public function getSellerId(){
+        return $this->seller ? $this->seller->id : 'none';
     }
     
     /**
     * @get Username
     */
     public function getUsername(){
-        return $this->user->username;
-    }
-    
-    /**
-    * @get Username
-    */
-    public function getEmail(){
-        return $this->user->email;
+        return User::find()->select('username')->where(['id'=> $this->seller->user_id ])->scalar();
     }
     
     /**
     * @getUserId
     */
     public function getUserId(){
-        return $this->user ? $this->user->id : 'none';
+        return $this->seller ? $this->seller->user_id : 'none';
     }
     
     /**
     * @getUserLink
     */
     public function getUserLink(){
-        $url = Url::to(['user/view', 'id'=>$this->UserId]);
+        $url = Url::to(['user/view', 'id'=>$this->userId]);
         $options = [];
-        return Html::a($this->getUserName(), $url, $options);
+        return Html::a($this->getUsername(), $url, $options);
     }
     
     /**
     * @getProfileLink
     */
     public function getProfileIdLink(){
-        $url = Url::to(['profile/update', 'id'=>$this->id]);
+        $url = Url::to(['profile/view', 'id'=>$this->id]);
         $options = [];
         return Html::a($this->id, $url, $options);
     }

@@ -11,7 +11,7 @@ $this->params['breadcrumbs'][] = ['label' => 'Profiles', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->first_name . ' ' . $model->last_name, 'url' => ['view', 'id' => $model->id]];
 $this->params['breadcrumbs'][] = 'Update';
 
-$show_this_for_admin = PermissionHelpers::requireRole('SuperUser');
+$show_this_for_admin = PermissionHelpers::requireRole('Superuser');
 $show_this_for_seller = PermissionHelpers::requireRole('Seller');
 ?>
 <div class="profile-update">
@@ -22,6 +22,7 @@ $show_this_for_seller = PermissionHelpers::requireRole('Seller');
     ?>
         <?= $this->render('_form', [
             'model' => $model,
+            'seller_id' => $seller_id,
             ])
         ?>
     <?php

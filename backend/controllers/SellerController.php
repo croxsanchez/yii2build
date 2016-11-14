@@ -58,7 +58,7 @@ class SellerController extends Controller
      */
     public function actionIndex()
     {
-        if (PermissionHelpers::requireMinimumRole('Admin')
+        if (PermissionHelpers::requireRole('Superuser')
                 && PermissionHelpers::requireStatus('Active')){
             $searchModel = new SellerSearch();
             $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -82,7 +82,7 @@ class SellerController extends Controller
      * "My Organization".
      * @return mixed
      */
-    public function actionMyOrganization($seller_user_id, $parent_seller_id=0, $offset=0)
+    public function actionMyOrganization($seller_user_id, $parent_seller_id=1, $offset=0)
     {
         if (!Yii::$app->user->isGuest &&
             PermissionHelpers::requireRole('Seller')
@@ -115,14 +115,6 @@ class SellerController extends Controller
         }
     }
 
-    /**
-     * Changes the organization_level attribute.
-     * @param integer $offset
-     * @return integer
-     */public function changeOrganizationLevel($offset) {
-        return $this->organization_level += $offset;
-    }
-    
     /**
      * Displays a single Seller model.
      * @param integer $id
@@ -230,5 +222,14 @@ class SellerController extends Controller
             ->one();
 
         return $total = $result['count'];
+    }
+    
+    /**
+     * Changes the organization_level attribute.
+     * @param integer $offset
+     * @return integer
+     */
+    public function changeOrganizationLevel($offset) {
+        return $this->organization_level += $offset;
     }
 }

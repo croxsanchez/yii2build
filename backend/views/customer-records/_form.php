@@ -115,26 +115,25 @@ use yii\helpers\Url;
         ],
     ]);?>
     
-    <h2>Domains</h2>
+    <h2>Websites</h2>
     <?= \yii\grid\GridView::widget([
         'dataProvider' => new \yii\data\ActiveDataProvider(
                 [
-                    'query' => $model->getDomains(), 
+                    'query' => $model->getWebsites(), 
                     'pagination' => false
                 ]
         ),
         'columns' => [
-            'name',
-            'domain_choice_value',
-            'payment_status_value',
-            'theme_id',
+            'description',
+            'paymentMethodName',
+            'paymentStatusName',
             [
                 'class' => \yii\grid\ActionColumn::className(),
-                'controller' => 'domains',
+                'controller' => 'website',
                 'template' => '{update}{delete}',
                 'header' => Html::a(
                         '<i class="glyphicon glyphicon-plus"></i>&nbsp;Add New',
-                        ['domains/create', 'customer_id' => $model->id]
+                        ['website/create', 'customer_id' => $model->id]
                 ),
             ],
         ],

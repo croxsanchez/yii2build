@@ -41,11 +41,11 @@ use limion\jqueryfileupload\JQueryFileUpload;
 <!-- Nav tabs -->
 <ul class="nav nav-tabs" role="tablist">
   <li class="active"><a href="#personal" role="tab" data-toggle="tab">Personal Details</a></li>
-<?php if (!$model->isNewRecord):?>  <li><a href="#contact" role="tab" data-toggle="tab">Contact Information</a></li> <?php endif; ?>
+  <li><a href="#contact" role="tab" data-toggle="tab">Contact Information</a></li>
   <li><a href="#photo" role="tab" data-toggle="tab">Upload Photo</a></li>
 </ul>
         
-<div class="profile-update">
+<div class="profile-form">
 <!-- Tab panes -->
 <div class="tab-content">
   <div class="tab-pane active vertical-pad" id="personal">
@@ -69,13 +69,12 @@ use limion\jqueryfileupload\JQueryFileUpload;
                     ]
                 ]);    ?>
   </div>
- <?php if (!$model->isNewRecord):?>
   <div class="tab-pane vertical-pad" id="contact">
     <!-- subtables will be here... -->
     <h2>Phones</h2>
     <?= \yii\grid\GridView::widget([
         'dataProvider' => new \yii\data\ActiveDataProvider([
-            'query' => $model->getSellerPhones(),
+            'query' => $model->getPhones($seller_id),
             'pagination' => false
         ]),
         'columns' => [
@@ -87,7 +86,7 @@ use limion\jqueryfileupload\JQueryFileUpload;
                 'controller' => 'seller-phone',
                 'header' => Html::a(
                         '<i class="glyphicon glyphicon-plus"></i>&nbsp;Add New', 
-                        ['seller-phone/create', 'relation_id' => $model->id]
+                        ['seller-phone/create', 'relation_id' => $seller_id]
                 ),
                 'template' => '{update}{delete}',
             ]
@@ -98,12 +97,11 @@ use limion\jqueryfileupload\JQueryFileUpload;
     <?= \yii\grid\GridView::widget([
         'dataProvider' => new \yii\data\ActiveDataProvider(
                 [
-                    'query' => $model->getSellerAddresses(), 
+                    'query' => $model->getAddresses($seller_id), 
                     'pagination' => false
                 ]
         ),
         'columns' => [
-            //'id',
             [
                 'label' => 'Address',
                 'value' => function ($model) {
@@ -121,13 +119,12 @@ use limion\jqueryfileupload\JQueryFileUpload;
                 'template' => '{update}{delete}',
                 'header' => Html::a(
                         '<i class="glyphicon glyphicon-plus"></i>&nbsp;Add New',
-                        ['seller-address/create', 'relation_id' => $model->id]
+                        ['seller-address/create', 'relation_id' => $seller_id]
                 ),
             ],
         ],
     ]);?>
   </div>
- <?php endif?>
   <div class="tab-pane vertical-pad" id="photo">
       <?= /*
         // your fileinput widget for single file upload

@@ -150,7 +150,7 @@ class CustomerRecordsController extends Controller
             $model = new CustomerRecord();
             $model->setScenario('create');
 
-            if ($model->load(Yii::$app->request->post())) {
+            if ($model->load(Yii::$app->request->post()) && $model->save()) {
                 return $this->redirect(['update', 'id' => $model->id]);
             } else {
                 return $this->render('create', [

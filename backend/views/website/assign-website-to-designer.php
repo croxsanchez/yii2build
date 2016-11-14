@@ -7,10 +7,10 @@ use yii\grid\GridView;
 /* @var $searchModel backend\models\customer\CustomerRecordSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Sites for Development';
+$this->title = 'Websites for Development';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="domain-record-index">
+<div class="website-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
     <?= GridView::widget([
@@ -20,18 +20,27 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'yii\grid\SerialColumn'],
             [
                 'attribute' => 'id',
-                'label' => 'Domain Id',
+                'label' => 'Website Id',
             ],
             'customer_id',
-            'customerName',
             [
-                'attribute' => 'name',
+                'attribute' => 'customerName',
+                'label' => 'Customer Name',
+            ],
+            [
+                'attribute' => 'domainName',
                 'label' => 'Domain Name',
             ],
             //'paymentStatus',
             [
-                'class' => 'yii\grid\ActionColumn',
-                'header' => 'Update Info',
+                'class' => \yii\grid\ActionColumn::className(),
+                'header' => 'Assign to Designer',
+                'controller' => 'website',
+                'urlCreator' => function ($action, $model, $key, $index) {
+                        if ($action === 'update') {
+                            return Url::toRoute(['assign-to-designer', 'id' => $model['id']]);
+                        }
+                    },
                 'template' => '{update}',
             ],
         ],

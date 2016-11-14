@@ -77,17 +77,17 @@ class Seller extends ActiveRecord
     }
 
     /**
-    * @getId
-    */
+     * @getId
+     */
     public function getId(){
         return $this->getPrimaryKey();
     }
     
     /**
-    * @getIdLink
-    * get seller id Link
-    *
-    */
+     * @getIdLink
+     * get seller id Link
+     *
+     */
     public function getIdLink(){
         $url = Url::to(['seller/view', 'id'=>$this->id]);
         $options = [];
@@ -103,17 +103,17 @@ class Seller extends ActiveRecord
     }
     
     /**
-    * @getUsername
-    *
-    */
+     * @getUsername
+     *
+     */
     public function getUsername(){
         return $this->user ? $this->user->username : '- no user -';
     }
     
     /**
-    * @getUserIdLink
-    *
-    */
+     * @getUserIdLink
+     *
+     */
     public function getUserIdLink(){
         $url = Url::to(['user/update', 'id'=>$this->user_id]);
         $options = [];
@@ -121,9 +121,9 @@ class Seller extends ActiveRecord
     }
     
     /**
-    * @getUserLink
-    *
-    */
+     * @getUserLink
+     *
+     */
     public function getUserLink(){
         $url = Url::to(['user/view', 'id'=>$this->user_id]);
         $options = [];
@@ -131,9 +131,9 @@ class Seller extends ActiveRecord
     }
     
     /**
-    * @getUserLink
-    *
-    */
+     * @getUserLink
+     *
+     */
     public function getSellerOrganization(){
         $url = Url::to(['seller/my-organization', 'seller_user_id'=>$this->user_id, 'parent_seller_id' => $this->parent_id, 'offset' => 1]);
         $options = [
@@ -144,7 +144,7 @@ class Seller extends ActiveRecord
             'data-url' => $url,
             'data-pjax' => '0',
         ];
-        return Html::a($this->user ? $this->user->username.": Organization" : '- no user -', '#', $options);
+        return Html::a($this->user ? $this->user->username."'s Organization" : '- no user -', '#', $options);
     }
     
     /**
@@ -156,17 +156,17 @@ class Seller extends ActiveRecord
     }
     
     /**
-    * @getParentUsername
-    *
-    */
+     * @getParentUsername
+     *
+     */
     public function getParentUsername(){
         return $this->parentUser ? $this->parentUser->username : '- no parent -';
     }
     
     /**
-    * @getParentUserLink
-    *
-    */
+     * @getParentUserLink
+     *
+     */
     public function getParentUserLink(){
         $url = Url::to(['user/view', 'id'=>$this->parent_id]);
         $options = [];
@@ -174,25 +174,25 @@ class Seller extends ActiveRecord
     }
     
     /**
-    * getRank
-    * line break to avoid word wrap in PDF
-    * code as single line in your IDE
-    */
+     * getRank
+     * line break to avoid word wrap in PDF
+     * code as single line in your IDE
+     */
     public function getRank(){
         return $this->hasOne(Rank::className(), ['value' =>'rank_value']);
     }
     
     /**
-    * get user type name
-    *
-    */
+     * get user type name
+     *
+     */
     public function getRankName(){
         return $this->rank ? $this->rank->name : '- no rank -';
     }
     
     /**
-    * get list of user types for dropdown
-    */
+     * get list of user types for dropdown
+     */
     public static function getRankList(){
         $droptions = Rank::find()->asArray()->all();
         return Arrayhelper::map($droptions, 'value', 'name');

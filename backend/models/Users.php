@@ -13,7 +13,6 @@ use backend\models\Role;
 use yii\helpers\ArrayHelper;
 use backend\models\Status;
 use backend\models\UserType;
-use frontend\models\Profile;
 use yii\helpers\Url;
 use yii\helpers\Html;
 
@@ -96,8 +95,6 @@ class Users extends ActiveRecord implements IdentityInterface
             /* Your other attribute labels */
             'roleName' => Yii::t('app', 'Role'),
             'statusName' => Yii::t('app', 'Status'),
-            'profileId' => Yii::t('app', 'Profile'),
-            'profileLink' => Yii::t('app', 'Profile'),
             'userLink' => Yii::t('app', 'User'),
             'username' => Yii::t('app', 'User Name'),
             'userTypeName' => Yii::t('app', 'User Type'),
@@ -260,29 +257,6 @@ class Users extends ActiveRecord implements IdentityInterface
     public function removePasswordResetToken(){
         $this->password_reset_token = null;
     }
-    
-    public function getProfile(){
-        return $this->hasOne(Profile::className(), ['user_id' => 'id']);
-    }
-    
-    /**
-    * @getProfileId
-    *
-    */
-    public function getProfileId(){
-        return $this->profile ? $this->profile->id : 'none';
-    }
-    
-    /**
-    * @getProfileLink
-    *
-    */
-    public function getProfileLink(){
-        $url = Url::to(['profile/view', 'id'=>$this->profileId]);
-        $options = [];
-        return Html::a($this->profile ? 'profile' : 'none', $url, $options);
-    }
-
     
     /**
     * get role relationship
