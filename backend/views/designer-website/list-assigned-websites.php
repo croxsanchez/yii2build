@@ -2,15 +2,16 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
+use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $searchModel backend\models\customer\CustomerRecordSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Websites for Development';
+$this->title = 'List of Websites Assigned to a Designer';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="website-index">
+<div class="designer-website-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
     <?= GridView::widget([
@@ -22,23 +23,28 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attribute' => 'id',
                 'label' => 'Website Id',
             ],
-            'customer_id',
             [
-                'attribute' => 'customerName',
-                'label' => 'Customer Name',
+                'attribute' => 'description',
+                'label' => 'Website Description',
             ],
             [
                 'attribute' => 'domainName',
                 'label' => 'Domain Name',
             ],
+            [
+                'attribute' => 'designerName',
+                'label' => 'Designer Name',
+            ],
+            
+            
             //'paymentStatus',
             [
                 'class' => \yii\grid\ActionColumn::className(),
-                'header' => 'Assign to Designer',
+                'header' => 'Assign Designer',
                 'controller' => 'website',
                 'urlCreator' => function ($action, $model, $key, $index) {
                         if ($action === 'update') {
-                            return Url::toRoute(['assign-to-designer', 'id' => $model['id']]);
+                            return Url::toRoute(['designer-website/assign', 'id' => $model['id']]);
                         }
                     },
                 'template' => '{update}',

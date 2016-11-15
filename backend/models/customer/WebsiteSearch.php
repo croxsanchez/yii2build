@@ -221,11 +221,10 @@ class WebsiteSearch extends Website
 
         $query->select(['website.id AS id', 'website.customer_id', 'customer.name AS customerName', 'domain.name AS domainName'])
             ->innerJoin('customer', 'website.customer_id = customer.id')
+            ->innerJoin('domain','domain.id = website.domain_id')
             ->where(['website.created_by' => $params['seller_user_id']])
             ->andWhere(['payment_status_value' => 20])
-            ->innerJoin('domain','domain.id = website.domain_id')
-            ->innerJoin(['ds' => 'domain_status'], 'domain.domain_status_value = ds.value')
-            ->where(['ds.value' => 20])
+            ->andWhere(['domain.domain_status_value' => 20])
             ->all();
 
         $this->load($params);

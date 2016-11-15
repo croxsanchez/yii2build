@@ -9,6 +9,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use backend\models\customer\Domain;
+use backend\models\DesignerWebsite;
 use backend\models\customer\PreDomain;
 use common\models\PermissionHelpers;
 use yii\data\ArrayDataProvider;
@@ -170,16 +171,6 @@ class WebsiteController extends Controller
                     'searchModel'  => $searchModel,
                     'dataProvider' => $dataProvider,
                 ]);
-        } elseif (!Yii::$app->user->isGuest 
-                && PermissionHelpers::requireRole('Admin')
-                    && PermissionHelpers::requireStatus('Active')){
-            $searchModel = new WebsiteSearch();
-            $dataProvider = $searchModel->searchMyWebsitesForDevelopment(Yii::$app->request->queryParams);
-
-            return $this->render('assign-website-to-designer', [
-                    'searchModel'  => $searchModel,
-                    'dataProvider' => $dataProvider,
-                ]);
         } else {
             throw new NotFoundHttpException('You\'re not allowed to enter this view.');
         }
@@ -194,17 +185,19 @@ class WebsiteController extends Controller
     public function actionSendToDevelopment($id)
     {
         $model = $this->findModel($id);
-        $domain = new Domain();        
+        $domain = new Domain();
+        $designer_website = new DesignerWebsite();
         $dataProvider = new ArrayDataProvider([
             'allModels' => PreDomain::find()->where(['website_id' => $model->id])->all(),
         ]);
         
         if ($model->load(Yii::$app->request->post()) 
-                && $domain->load(Yii::$app->request->post())) {
+                && $domain->load(Yii::$app->request->post())
+                && $designer_website->load(Yii::$app->request->post())) {
             //return $this->redirect(['view', 'id' => $model->id]);
             $domain->customer_id = $model->customer_id;
             $domain->domain_status_value = 20;
-            if ($domain->save()){
+            if ($domain->save() && $designer_website->save()){
                 $model->domain_id = $domain->id;
                 $model->save();
                 return $this->goBack();
@@ -217,6 +210,7 @@ class WebsiteController extends Controller
                 'model' => $model,
                 'customer_id' => $model->customer_id,
                 'domain' => $domain,
+                'designer_website' => $designer_website,
                 'dataProvider' => $dataProvider,
             ]);
         }

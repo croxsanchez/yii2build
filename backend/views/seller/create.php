@@ -1,12 +1,8 @@
 <?php
 
 use yii\helpers\Html;
-use yii\web\View;
 use yii\widgets\ActiveForm;
-use yii\helpers\ArrayHelper;
-use backend\models\IdentificationCardInitial;
-use backend\models\IdentificationCardType;
-use yii\helpers\Url;
+
 /* Create Seller UI
  * @var $this yii\web\View
  * @var $model backend\models\Seller

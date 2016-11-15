@@ -18,6 +18,7 @@ $this->params['breadcrumbs'][] = 'Update';
         'model' => $model,
         'customer_id' => $customer_id,
         'domain' => $domain,
+        'designer_website' => $designer_website,
         'dataProvider' => $dataProvider,
     ]) ?>
 

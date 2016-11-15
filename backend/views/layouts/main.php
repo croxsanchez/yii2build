@@ -159,10 +159,10 @@ FontAwesomeAsset::register($this);
                     ]
                 ],
                 [
-                    'label' => 'Sites to be Assigned',
+                    'label' => 'List of Assigned Websites',
                     'url' => [
-                        'website/websites-for-development',
-                        'tag' => 'assign_website'
+                        'designer-website/list-assigned-websites',
+                        'tag' => 'assigned_websites'
                     ]
                 ],
             ]

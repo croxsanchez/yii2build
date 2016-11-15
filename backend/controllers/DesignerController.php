@@ -4,10 +4,12 @@ namespace backend\controllers;
 
 use Yii;
 use backend\models\Designer;
+use backend\models\DesignerForm;
 use backend\models\search\DesignerSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use common\models\PermissionHelpers;
 
 /**
  * DesignerController implements the CRUD actions for Designer model.
@@ -63,11 +65,19 @@ class DesignerController extends Controller
      */
     public function actionCreate()
     {
-        $model = new Designer();
+        if(!Yii::$app->user->isGuest &&
+            PermissionHelpers::requireRole('Superuser')
+                    && PermissionHelpers::requireStatus('Active')){
+            $model = new DesignerForm();
+            $model->setScenario('create');
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
+            if ($model->load(Yii::$app->request->post())) {
+                if ($designer = $model->create()) {
+                    return $this->redirect(['view', 'id' => $designer->id]);
+                } else {
+                    throw new NotFoundHttpException('There were errors creating new User or Designer.');
+                }
+            }
             return $this->render('create', [
                 'model' => $model,
             ]);

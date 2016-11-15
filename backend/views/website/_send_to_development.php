@@ -42,6 +42,12 @@ use yii\helpers\ArrayHelper;
     
     <?= $form->field($domain, 'name')->textInput(['maxlength' => true])->label('Defnitive Name') ?>
 
+    <h3>Assign Website to Designer</h3>
+    
+    <?= Html::activeHiddenInput($designer_website, 'website_id', ['value' => $model->id]);?>
+    
+    <?= $form->field($designer_website, 'designer_id')->dropDownList($designer_website->designerList, ['prompt' => 'Please choose one'])->label('Choose Designer'); ?>
+    
     <div class="form-group">
         <?= Html::submitButton('Send to development', ['class' => 'btn btn-primary']) ?>
     </div>

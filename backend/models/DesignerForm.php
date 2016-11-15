@@ -3,14 +3,14 @@
 namespace backend\models;
 
 use common\models\User;
-use backend\models\Seller;
+use backend\models\Designer;
 use yii\base\Model;
 use Yii;
 
 /**
  * Signup form
  */
-class SellerForm extends Model
+class DesignerForm extends Model
 {
     public $username;
     public $first_name;
@@ -23,11 +23,6 @@ class SellerForm extends Model
     public $user_type_id;
     public $status_id;
     public $user_id;
-    public $parent_id;
-    public $rank_value;
-    public $rank_date;
-    public $total_points;
-    public $credits;
 
     protected $user;
 
@@ -42,6 +37,10 @@ class SellerForm extends Model
             [['username', 'email'], 'required', 'on' => 'update'],
             ['username', 'unique', 'targetClass' => '\common\models\User', 'message' => 'This username has already been taken.'],
             ['username', 'string', 'min' => 2, 'max' => 255],
+            
+            ['first_name', 'string', 'min' => 2, 'max' => 45],
+            ['last_name', 'string', 'min' => 2, 'max' => 45],
+            [['first_name', 'last_name'], 'safe'],
 
             ['email', 'filter', 'filter' => 'trim'],
             ['email', 'email'],
@@ -105,13 +104,13 @@ class SellerForm extends Model
             $user->user_type_id = $this->user_type_id;
             $user->status_id = $this->status_id;
             if ($user->save()){
-                $seller = new Seller();
-                $seller->user_id = $user->id;
-                $seller->parent_id = Yii::$app->user->id;
-                $seller->rank_date= $user->getCreatedAt();
-                $seller->id_card_number = $this->id_card_number;
-                if ($seller->save()){
-                    return $seller;
+                $designer = new Designer();
+                $designer->user_id = $user->id;
+                $designer->id_card_number = $this->id_card_number;
+                $designer->first_name = $this->first_name;
+                $designer->last_name = $this->last_name;
+                if ($designer->save()){
+                    return $designer;
                 } else {
                     return null;
                 }
