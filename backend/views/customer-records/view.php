@@ -48,6 +48,7 @@ $show_this_for_seller = PermissionHelpers::requireRole('Seller');
             'created_by',
             'updated_at',
             'updated_by',
+            'id_card_number',
         ],
     ]) ?>
 

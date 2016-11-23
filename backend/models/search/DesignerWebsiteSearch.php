@@ -12,10 +12,11 @@ use backend\models\DesignerWebsite;
  */
 class DesignerWebsiteSearch extends DesignerWebsite
 {
-    public $designerFirstName;
-    public $designerLastName;
     public $designerName;
-    
+    public $website_description;
+    public $domainName;
+
+
     /**
      * @inheritdoc
      */
@@ -87,12 +88,12 @@ class DesignerWebsiteSearch extends DesignerWebsite
 
         $dataProvider->setSort([
             'attributes' => [
-                'id' => [
-                    'asc' => ['website.id' => SORT_ASC],
-                    'desc' => ['website.id' => SORT_DESC],
+                'website_id' => [
+                    'asc' => ['website_id' => SORT_ASC],
+                    'desc' => ['website_id' => SORT_DESC],
                     'label' => 'Id'
                 ],
-                'description' => [
+                'website_description' => [
                     'asc' => ['website.description' => SORT_ASC],
                     'desc' => ['website.description' => SORT_DESC],
                     'label' => 'Website Description'
@@ -103,8 +104,8 @@ class DesignerWebsiteSearch extends DesignerWebsite
                     'label' => 'Domain Name'
                 ],
                 'designerName' => [
-                    'asc' => ['designerFirstName'.' '.'designerFirstName' => SORT_ASC],
-                    'desc' => ['designerFirstName'.' '.'designerFirstName' => SORT_DESC],
+                    'asc' => ['designer.first_name' => SORT_ASC],
+                    'desc' => ['designer.first_name' => SORT_DESC],
                     'label' => 'Designer Name'
                 ],
             ]
@@ -115,15 +116,14 @@ class DesignerWebsiteSearch extends DesignerWebsite
                                 ->from('domain_status')
                                 ->where(['value' => 20]);*/
         $query->select([
-                'website.id AS id', 
-                'website.description AS description',
+                'website_id', 
+                'website.description AS website_description',
                 'domain.name AS domainName', 
-                'designer.first_name AS designerFirstName', 
-                'designer.last_name AS designerLastName'
+                'designer.first_name AS designerName', 
             ])
             ->innerJoin('website', 'website.id = website_id')
             ->innerJoin('designer','designer.id = designer_id')
-            ->innerJoin('domain','designer.id = designer_id')
+            ->innerJoin('domain','domain.id = website.domain_id')
             ->where(['or','domain.domain_status_value=20', 'domain.domain_status_value=30'])
             ->all();
 

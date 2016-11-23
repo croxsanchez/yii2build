@@ -166,6 +166,7 @@ class WebsiteController extends Controller
                     && PermissionHelpers::requireStatus('Active')){
             $searchModel = new WebsiteSearch();
             $dataProvider = $searchModel->searchMyWebsitesForDevelopment(Yii::$app->request->queryParams);
+            $this->storeReturnUrl();
 
             return $this->render('websites-for-development', [
                     'searchModel'  => $searchModel,
@@ -197,6 +198,7 @@ class WebsiteController extends Controller
             //return $this->redirect(['view', 'id' => $model->id]);
             $domain->customer_id = $model->customer_id;
             $domain->domain_status_value = 20;
+            
             if ($domain->save() && $designer_website->save()){
                 $model->domain_id = $domain->id;
                 $model->save();
@@ -213,6 +215,34 @@ class WebsiteController extends Controller
                 'designer_website' => $designer_website,
                 'dataProvider' => $dataProvider,
             ]);
+        }
+    }
+
+    /**
+     * Updates an existing Website model.
+     * If update is successful, the browser will be redirected to the 'view' page.
+     * @param integer $id
+     * @return mixed
+     */
+    public function actionSendToDesign($id)
+    {
+        if (!Yii::$app->user->isGuest &&
+            PermissionHelpers::requireRole('Seller')
+                    && PermissionHelpers::requireStatus('Active')){
+            $model = $this->findModel($id);
+            $domain = Domain::findOne(['id' => $model->domain_id]);
+
+            if (!empty($domain)){
+                // Assign the 'Design' status to domain_satus_value property
+                $domain->domain_status_value = 30;
+                if ($domain->save()){
+                    return $this->goBack();
+                } else {
+                    throw new NotFoundHttpException('Error modifying the database.');
+                }
+            }
+        } else {
+            throw new NotFoundHttpException('You\'re not allowed to perform this action.');
         }
     }
 

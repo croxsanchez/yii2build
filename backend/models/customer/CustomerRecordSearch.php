@@ -25,7 +25,7 @@ class CustomerRecordSearch extends CustomerRecord
     {
         return [
             [['id', 'customer_type_id', 'created_by', 'updated_by'], 'integer'],
-            [['name', 'birth_date', 'notes', 'created_at', 'updated_at', 'country', 'domainName'], 'safe'],
+            [['name', 'birth_date', 'notes', 'created_at', 'updated_at', 'country', 'websites', 'domainName','id_card_number'], 'safe'],
         ];
     }
 
@@ -93,7 +93,8 @@ class CustomerRecordSearch extends CustomerRecord
         ]);
 
         $query->andFilterWhere(['like', 'name', $this->name])
-            ->andFilterWhere(['like', 'notes', $this->notes]);
+            ->andFilterWhere(['like', 'notes', $this->notes])
+             ->andFilterWhere(['like', 'id_card_number', $this->id_card_number]);
 
         $query->andFilterWhere(['like', 'address.country',$this->country]);
 
@@ -132,6 +133,12 @@ class CustomerRecordSearch extends CustomerRecord
             'asc' => ['phone.number' => SORT_ASC],
             'desc' => ['phone.number' => SORT_DESC],
         ];
+        
+        $query->joinWith('websites');
+        $dataProvider->sort->attributes['website'] = [
+            'asc' => ['website.description' => SORT_ASC],
+            'desc' => ['website.description' => SORT_DESC],
+        ];
 
         $this->load($params);
 
@@ -142,7 +149,7 @@ class CustomerRecordSearch extends CustomerRecord
         }
 
         // grid filtering conditions
-        $query->where(['created_by' => $params['seller_user_id']]);
+        $query->where(['customer.created_by' => $params['seller_user_id']]);
 
         $query->andFilterWhere([
             'customer.id' => $this->id,

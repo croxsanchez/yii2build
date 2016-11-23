@@ -28,7 +28,8 @@
 	"2amigos/yii2-file-upload-widget": "~1.0",
 	"limion/yii2-jquery-fileupload-widget": "~1.0",
         "kartik-v/yii2-widget-fileinput": "*",
-	"kartik-v/yii2-widget-datepicker": "*"
+	"kartik-v/yii2-widget-datepicker": "*",
+	"kartik-v/yii2-dialog": "*"
     },
     "require-dev": {
         "yiisoft/yii2-codeception": "*",

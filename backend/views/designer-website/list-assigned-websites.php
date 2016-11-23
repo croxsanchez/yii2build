@@ -20,11 +20,11 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
             [
-                'attribute' => 'id',
+                'attribute' => 'website_id',
                 'label' => 'Website Id',
             ],
             [
-                'attribute' => 'description',
+                'attribute' => 'website_description',
                 'label' => 'Website Description',
             ],
             [
@@ -44,7 +44,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'controller' => 'website',
                 'urlCreator' => function ($action, $model, $key, $index) {
                         if ($action === 'update') {
-                            return Url::toRoute(['designer-website/assign', 'id' => $model['id']]);
+                            return Url::toRoute(['designer-website/assign', 'id' => $model['website_id']]);
                         }
                     },
                 'template' => '{update}',

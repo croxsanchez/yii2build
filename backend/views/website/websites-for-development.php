@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
+use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $searchModel backend\models\customer\CustomerRecordSearch */
@@ -33,8 +34,14 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             //'paymentStatus',
             [
-                'class' => 'yii\grid\ActionColumn',
-                'header' => 'Update Info',
+                'class' => '\yii\grid\ActionColumn',
+                'header' => 'Send to Design',
+                'controller' => 'website',
+                'urlCreator' => function ($action, $model, $key, $index) {
+                        if ($action === 'update') {
+                            return Url::toRoute(['send-to-design', 'id' => $model['id']]);
+                        }
+                    },
                 'template' => '{update}',
             ],
         ],

@@ -31,7 +31,11 @@ use yii\db\Expression;
  * @property integer $updated_by
  * @property integer $payment_status_value
  * @property integer $domain_id
+ * @property boolean $online_store
+ * @property boolean $social_media
  *
+ * @property DesignerWebsite $designerWebsite
+ * @property Designer[] $designers
  * @property PreDomain[] $preDomains
  * @property Customer $customer
  * @property Domain $domain
@@ -41,23 +45,24 @@ use yii\db\Expression;
  */
 class Website extends \yii\db\ActiveRecord
 {
-    /** 
-     * @inheritdoc 
-     */ 
+    /**
+     * @inheritdoc
+     */
     public static function tableName()
     {
         return 'website';
     }
 
-    /** 
-     * @inheritdoc 
-     */ 
+    /**
+     * @inheritdoc
+     */
     public function rules()
     {
         return [
             [['customer_id', 'theme_id', 'payment_method_value'], 'required'],
-            [['customer_id', 'theme_id', 'payment_method_value', 'domain_id'], 'integer'],
+            [['customer_id', 'theme_id', 'payment_method_value', 'created_by', 'updated_by', 'payment_status_value', 'domain_id'], 'integer'],
             [['created_at', 'updated_at'], 'safe'],
+            [['online_store', 'social_media'], 'boolean'],
             [['description'], 'string', 'max' => 255],
             [['customer_id'], 'exist', 'skipOnError' => true, 'targetClass' => CustomerRecord::className(), 'targetAttribute' => ['customer_id' => 'id']],
             [['domain_id'], 'exist', 'skipOnError' => true, 'targetClass' => Domain::className(), 'targetAttribute' => ['domain_id' => 'id']],
@@ -70,7 +75,7 @@ class Website extends \yii\db\ActiveRecord
             [['updated_by'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['updated_by' => 'id']],
         ];
     }
-    
+
     /**
      * @inheritdoc
      */
@@ -91,12 +96,14 @@ class Website extends \yii\db\ActiveRecord
             'payment_status_value' => Yii::t('app', 'Payment Status Value'),
             'paymentStatusName' => 'Payment Status',
             'domain_id' => 'Domain ID',
+            'online_store' => 'Online Store',
+            'social_media' => 'Social Media',
        ];
     }
-    
+
     /**
-    * behaviors
-    */
+     * behaviors
+     */
     public function behaviors()
     {
         return [
@@ -121,6 +128,30 @@ class Website extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
+    public function getDesignerWebsite()
+    {
+        return $this->hasOne(DesignerWebsite::className(), ['website_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getDesigners()
+    {
+        return $this->hasMany(Designer::className(), ['id' => 'designer_id'])->viaTable('designer_website', ['website_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getPreDomains()
+    {
+        return $this->hasMany(PreDomain::className(), ['website_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getCustomer()
     {
         return $this->hasOne(CustomerRecord::className(), ['id' => 'customer_id']);
@@ -133,7 +164,7 @@ class Website extends \yii\db\ActiveRecord
     public function getCustomerName(){
         return $this->customer ? $this->customer->name : '- no name provided -';
     }
-    
+
     public function getFullWebsite()
     {
         return implode(', ',
@@ -141,15 +172,7 @@ class Website extends \yii\db\ActiveRecord
         $this->getAttributes(
                 ['description'])));
     }
-    
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getPreDomains()
-    {
-        return $this->hasMany(PreDomain::className(), ['website_id' => 'id']);
-    }
-        
+
     /**
      * @return \yii\db\ActiveQuery
      */
@@ -157,7 +180,7 @@ class Website extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Domain::className(), ['id' => 'domain_id']);
     }
-    
+
     /**
      * get theme name
      *
@@ -165,16 +188,15 @@ class Website extends \yii\db\ActiveRecord
     public function getDomainName(){
         return $this->domain ? $this->domain->name : '- no theme -';
     }
-    
+
     /**
-     * get theme
-     *
+     * @return \yii\db\ActiveQuery
      */
     public function getTheme()
     {
          return $this->hasOne(ThemeRecord::className(), ['id' => 'theme_id']);
     }
-    
+
     /**
      * get theme name
      *
@@ -182,7 +204,7 @@ class Website extends \yii\db\ActiveRecord
     public function getThemeName(){
         return $this->theme ? $this->theme->name : '- no theme -';
     }
-    
+
     /**
      * get list of domain choices for dropdown
      */
@@ -190,7 +212,7 @@ class Website extends \yii\db\ActiveRecord
         $droptions = ThemeRecord::find()->asArray()->all();
         return Arrayhelper::map($droptions, 'id', 'name');
     }
-    
+
     /**
      * @return \yii\db\ActiveQuery
      */
@@ -198,7 +220,7 @@ class Website extends \yii\db\ActiveRecord
     {
         return $this->hasMany(DomainThemeRecord::className(), ['domain_id' => 'id']);
     }
-    
+
     /**
      * get payment method
      *
@@ -207,7 +229,7 @@ class Website extends \yii\db\ActiveRecord
     {
          return $this->hasOne(PaymentMethod::className(), ['value' => 'payment_method_value']);
     }
-    
+
     /**
      * get payment method name
      *
@@ -215,7 +237,7 @@ class Website extends \yii\db\ActiveRecord
     public function getPaymentMethodName(){
         return $this->paymentMethod ? $this->paymentMethod->type : '- no payment method assigned -';
     }
-    
+
     /**
      * get list of payment methods for dropdown
      */
@@ -223,7 +245,7 @@ class Website extends \yii\db\ActiveRecord
         $droptions = PaymentMethod::find()->asArray()->all();
         return Arrayhelper::map($droptions, 'value', 'type');
     }
-    
+
     /**
      * set payment status value
      *
@@ -232,7 +254,7 @@ class Website extends \yii\db\ActiveRecord
     {
          $this->payment_status_value = $value;
     }
-    
+
     /**
      * get payment status
      *
@@ -241,7 +263,7 @@ class Website extends \yii\db\ActiveRecord
     {
          return $this->hasOne(PaymentStatus::className(), ['value' => 'payment_status_value']);
     }
-    
+
     /**
      * get payment status name
      *
@@ -249,12 +271,28 @@ class Website extends \yii\db\ActiveRecord
     public function getPaymentStatusName(){
         return $this->paymentStatus ? $this->paymentStatus->name : '- no payment status -';
     }
-    
+
     /**
      * get list of payment statuses for dropdown
      */
     public static function getPaymentStatusList(){
         $droptions = PaymentStatus::find()->asArray()->all();
         return Arrayhelper::map($droptions, 'value', 'name');
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCreatedBy()
+    {
+        return $this->hasOne(User::className(), ['id' => 'created_by']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getUpdatedBy()
+    {
+        return $this->hasOne(User::className(), ['id' => 'updated_by']);
     }
 }

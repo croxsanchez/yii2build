@@ -34,10 +34,6 @@ use yii\helpers\Url;
     
     <?= $form->field($model, 'id_card_number')->textInput(['maxlength' => 40]);?>
 
-    <?= $form->field($model, 'online_store')->checkbox(); ?>
-    
-    <?= $form->field($model, 'social_media')->checkbox(); ?>
-    
     <?php if (!$model->isNewRecord):?>
     <!-- subtables will be here... -->
     <h2>Phones</h2>

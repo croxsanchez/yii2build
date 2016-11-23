@@ -28,6 +28,7 @@ class WebsiteSearch extends Website
         return [
             [['id', 'customer_id', 'theme_id', 'payment_method_value', 'created_by', 'updated_by', 'payment_status_value', 'domain_id'], 'integer'],
             [['description', 'created_at', 'updated_at'], 'safe'],
+            [['online_store', 'social_media'], 'boolean'],
         ];
     }
 
@@ -80,13 +81,15 @@ class WebsiteSearch extends Website
             'id' => $this->id,
             'customer_id' => $this->customer_id,
             'theme_id' => $this->theme_id,
-            'payment_method_value' => $this->payment_method_value, 
-            'created_at' => $this->created_at, 
-            'created_by' => $this->created_by, 
-            'updated_at' => $this->updated_at, 
-            'updated_by' => $this->updated_by, 
-            'payment_status_value' => $this->payment_status_value, 
+            'payment_method_value' => $this->payment_method_value,
+            'created_at' => $this->created_at,
+            'created_by' => $this->created_by,
+            'updated_at' => $this->updated_at,
+            'updated_by' => $this->updated_by,
+            'payment_status_value' => $this->payment_status_value,
             'domain_id' => $this->domain_id,
+            'online_store' => $this->online_store,
+            'social_media' => $this->social_media,
         ]);
 
         $query->andFilterWhere(['like', 'description', $this->description]);
@@ -151,6 +154,16 @@ class WebsiteSearch extends Website
                     'desc' => ['website.payment_status_value' => SORT_DESC],
                     'label' => 'Payment Status'
                 ],
+                'online_store' => [
+                    'asc' => ['website.online_store' => SORT_ASC],
+                    'desc' => ['website.online_store' => SORT_DESC],
+                    'label' => 'Online Store'
+                ],
+                'social_media' => [
+                    'asc' => ['website.social_media' => SORT_ASC],
+                    'desc' => ['website.social_media' => SORT_DESC],
+                    'label' => 'Social Media'
+                ],
             ]
         ]);
         
@@ -159,7 +172,7 @@ class WebsiteSearch extends Website
                                 ->from('payment_status')
                                 ->where(['value' => 10]);
         
-        $query->select(['website.id AS id', 'website.customer_id', 'customer.name AS customerName', 'website.description','pre_domain.name','domain_choice.order AS domainChoiceOrder' ,'paymentStatus' => $subQuery])
+        $query->select(['website.id AS id', 'website.customer_id', 'customer.name AS customerName', 'website.description','pre_domain.name','domain_choice.order AS domainChoiceOrder' ,'paymentStatus' => $subQuery, 'online_store', 'social_media'])
             ->from('website')
             ->innerJoin('pre_domain', 'pre_domain.website_id = website.id')
             ->innerJoin('domain_choice','pre_domain.domain_choice_value = domain_choice.value')
@@ -211,6 +224,16 @@ class WebsiteSearch extends Website
                     'desc' => ['domain.payment_status_value' => SORT_DESC],
                     'label' => 'Payment Status'
                 ],
+                'online_store' => [
+                    'asc' => ['website.online_store' => SORT_ASC],
+                    'desc' => ['website.online_store' => SORT_DESC],
+                    'label' => 'Online Store'
+                ],
+                'social_media' => [
+                    'asc' => ['website.social_media' => SORT_ASC],
+                    'desc' => ['website.social_media' => SORT_DESC],
+                    'label' => 'Social Media'
+                ],
             ]
         ]);
 
@@ -219,7 +242,7 @@ class WebsiteSearch extends Website
                                 ->from('domain_status')
                                 ->where(['value' => 20]);*/
 
-        $query->select(['website.id AS id', 'website.customer_id', 'customer.name AS customerName', 'domain.name AS domainName'])
+        $query->select(['website.id AS id', 'website.customer_id', 'customer.name AS customerName', 'domain.name AS domainName', 'online_store', 'social_media'])
             ->innerJoin('customer', 'website.customer_id = customer.id')
             ->innerJoin('domain','domain.id = website.domain_id')
             ->where(['website.created_by' => $params['seller_user_id']])
@@ -270,6 +293,16 @@ class WebsiteSearch extends Website
                     'desc' => ['domain.payment_status_value' => SORT_DESC],
                     'label' => 'Payment Status'
                 ],
+                'online_store' => [
+                    'asc' => ['website.online_store' => SORT_ASC],
+                    'desc' => ['website.online_store' => SORT_DESC],
+                    'label' => 'Online Store'
+                ],
+                'social_media' => [
+                    'asc' => ['website.social_media' => SORT_ASC],
+                    'desc' => ['website.social_media' => SORT_DESC],
+                    'label' => 'Social Media'
+                ],
             ]
         ]);
 
@@ -277,7 +310,7 @@ class WebsiteSearch extends Website
                                 ->from('payment_status')
                                 ->where(['value' => 20]);
 
-        $query->select(['website.id', 'domain.name', 'website.description','customer.name AS customerName', 'paymentStatus' => $subQuery])
+        $query->select(['website.id', 'domain.name', 'website.description','customer.name AS customerName', 'paymentStatus' => $subQuery, 'online_store', 'social_media'])
             ->innerJoin('customer', 'website.customer_id = customer.id')
             ->innerJoin('domain', 'domain.id = website.domain_id')
             ->where(['website.created_by' => $params['seller_user_id']])

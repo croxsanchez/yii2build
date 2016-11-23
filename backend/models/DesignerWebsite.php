@@ -43,7 +43,7 @@ class DesignerWebsite extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['designer_id', 'website_id', 'created_by', 'updated_by'], 'required'],
+            [['designer_id', 'website_id'], 'required'],
             [['designer_id', 'website_id', 'created_by', 'updated_by'], 'integer'],
             [['created_at', 'updated_at'], 'safe'],
             [['website_id'], 'unique'],

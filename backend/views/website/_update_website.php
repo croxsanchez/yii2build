@@ -14,6 +14,10 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'description')->textInput(['maxlength' => true]) ?>
     
+    <?= $form->field($model, 'online_store')->checkbox() ?>
+
+    <?= $form->field($model, 'social_media')->checkbox() ?>
+    
     <?= $form->field($model, 'payment_method_value')->dropDownList($model->paymentMethodList, 
             ['prompt' => 'Please choose one' ]); ?>
 

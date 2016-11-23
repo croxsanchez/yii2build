@@ -87,6 +87,7 @@ $this->params['breadcrumbs'][] = $this->title;
             // 'created_by',
             // 'updated_at',
             // 'updated_by',
+            // 'id_card_number',
 
             ['class' => 'yii\grid\ActionColumn'],
         ],

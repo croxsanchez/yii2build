@@ -23,6 +23,10 @@ use yii\widgets\ActiveForm;
     
     <?= Html::activeHiddenInput($model, 'theme_id', ['value' => 1]);?>
     
+    <?= $form->field($model, 'online_store')->checkbox() ?>
+
+    <?= $form->field($model, 'social_media')->checkbox() ?>
+    
     <h3>Domainname choices</h3>
     
     <?= $form->field($domain1, 'name')->textInput(['maxlength' => true])->label('First Choice') ?>

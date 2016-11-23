@@ -63,13 +63,13 @@ $this->params['breadcrumbs'][] = $this->title;
                 }
             ],
             [
-                'attribute' => 'domain',
-                'label' => 'Domains',
+                'attribute' => 'website',
+                'label' => 'Websites',
                 'format' => 'paragraphs',
                 'value' => function ($model) {
                     $result = '';
-                    foreach ($model->domains as $domain) {
-                        $result .= $domain->fullDomain . "\n\n";
+                    foreach ($model->websites as $website) {
+                        $result .= $website->fullWebsite . "\n\n";
                     }
                     return $result;
                 }

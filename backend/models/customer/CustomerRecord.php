@@ -29,8 +29,6 @@ use common\models\User;
  * @property integer $created_by
  * @property string $updated_at
  * @property integer $updated_by
- * @property boolean $online_store
- * @property boolean $social_media
  * @property string $id_card_number
  *
  * @property Address[] $addresses
@@ -39,6 +37,8 @@ use common\models\User;
  * @property Domain[] $domains
  * @property Email[] $emails
  * @property Phone[] $phones
+ * @property PreDomain[] $preDomains
+ * @property Website[] $websites
  */
 class CustomerRecord extends ActiveRecord
 {
@@ -63,7 +63,6 @@ class CustomerRecord extends ActiveRecord
             [['notes', 'online_store', 'social_media'], 'safe'],
             [['notes'], 'string'],
             [['customer_type_id', 'created_by', 'updated_by'], 'integer'],
-            [['online_store', 'social_media'], 'boolean'],
             [['name'], 'string', 'max' => 255],
             ['birth_date', 'date', 'format' => 'Y-m-d'],
             [['id_card_number'], 'string', 'max' => 40],
@@ -85,8 +84,7 @@ class CustomerRecord extends ActiveRecord
             'birth_date' => Yii::t('app', 'Birth Date'),
             'notes' => Yii::t('app', 'Notes'),
             'customerTypeName' => Yii::t('app', 'Customer Type'),
-            'online_store' => Yii::t('app', 'Online Store'),
-            'social_media' => Yii::t('app', 'Social Media'),
+            'websites' => Yii::t('app', 'Websites'),
             'id_card_number' => 'Id Card Number',
             'created_at' => 'Created At',
             'created_by' => 'Created By',
@@ -123,7 +121,7 @@ class CustomerRecord extends ActiveRecord
 
     public function getDomains()
     {
-        return $this->hasMany(DomainRecord::className(), ['customer_id' => 'id']);
+        return $this->hasMany(PreDomain::className(), ['customer_id' => 'id']);
     }
 
     public function getPhones()
@@ -139,6 +137,14 @@ class CustomerRecord extends ActiveRecord
     public function getEmails()
     {
         return $this->hasMany(EmailRecord::className(), ['customer_id' => 'id']);
+    }
+    
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getPreDomains()
+    {
+        return $this->hasMany(PreDomain::className(), ['customer_id' => 'id']);
     }
     
     public function getCustomerType()
