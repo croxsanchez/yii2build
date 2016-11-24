@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\helpers\Url;
+use kartik\dialog\Dialog;
 
 /* @var $this yii\web\View */
 /* @var $searchModel backend\models\customer\CustomerRecordSearch */
@@ -10,6 +11,11 @@ use yii\helpers\Url;
 
 $this->title = 'Websites for Development';
 $this->params['breadcrumbs'][] = $this->title;
+
+echo Dialog::widget([
+   'libName' => 'krajeeDialogCust', // optional if not set will default to `krajeeDialog`
+   'options' => ['draggable' => true, 'closable' => true], // custom options
+]);
 ?>
 <div class="website-index">
 
@@ -35,15 +41,44 @@ $this->params['breadcrumbs'][] = $this->title;
             //'paymentStatus',
             [
                 'class' => '\yii\grid\ActionColumn',
-                'header' => 'Send to Design',
+                'header' => 'Action',
                 'controller' => 'website',
+                'buttons' => [
+                    'toDesign' => function ($url, $model) {
+                        return Html::a('<span class="glyphicon glyphicon-edit"></span>', $url, [
+                                    'title' => Yii::t('app', 'Send to design'),
+                                    'data-confirm'=>'Are you sure you want to send this website to design?',
+                                    'data-method'=>'POST'
+                        ]);
+                    },
+                ],
                 'urlCreator' => function ($action, $model, $key, $index) {
-                        if ($action === 'update') {
-                            return Url::toRoute(['send-to-design', 'id' => $model['id']]);
+                        if ($action === 'toDesign') {
+                            return Url::toRoute(['send-to-design','id' => $model['id']]);
                         }
                     },
-                'template' => '{update}',
+                'template' => '{toDesign}',
             ],
         ],
     ]); ?>
 </div>
+
+<?php
+$js = <<< JS
+
+$("#accion").on("click", function() {
+                        krajeeDialog.confirm('Are you sure?', function(result){
+                            if (result) {
+                                alert('Great! You provided a reason: \n\n' + result);
+                            } else {
+                                alert('Oops! You declined to provide a reason!');
+                            }
+                    });
+ });
+
+JS;
+ 
+// register your javascript
+$this->registerJs($js);
+
+?>
