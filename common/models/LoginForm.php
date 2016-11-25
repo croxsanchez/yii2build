@@ -79,7 +79,7 @@ class LoginForm extends Model
     
     public function loginAdmin(){
         if (($this->validate()) && $this->getUser()->role_id >=
-            ValueHelpers::getRoleValue('Seller') 
+            ValueHelpers::getRoleValue('Designer') 
             && $this->getUser()->status_id ==
             ValueHelpers::getStatusValue('Active')) {
             

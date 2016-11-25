@@ -46,6 +46,8 @@ FontAwesomeAsset::register($this);
             $title = 'BcauseNet <i class="fa fa-plug"></i> Admin';
         } elseif (Yii::$app->user->identity->role_id == $is_seller) {
             $title = 'BcauseNet <i class="fa fa-plug"></i> Your Business';
+        } elseif (Yii::$app->user->identity->role_id == $is_designer) {
+            $title = 'BcauseNet <i class="fa fa-plug"></i> Designer Site';
         }
         NavBar::begin([
             'brandLabel' => $title,
@@ -112,11 +114,19 @@ FontAwesomeAsset::register($this);
                     ]
                 ],
                 [
+                    'label' => 'Temporary Published Websites',
+                    'url' => [
+                        'published-site/list-my-temporary-websites',
+                        'seller_user_id' => Yii::$app->user->id,
+                        'tag' => 'temporary_published'
+                    ]
+                ],
+                [
                     'label' => 'List Published Websites',
                     'url' => [
-                        'website/list-published-websites',
+                        'published-site/list-my-published-websites',
                         'seller_user_id' => Yii::$app->user->id,
-                        'tag' => 'paid'
+                        'tag' => 'published'
                     ]
                 ],
             ]
@@ -163,6 +173,28 @@ FontAwesomeAsset::register($this);
                     'url' => [
                         'designer-website/list-assigned-websites',
                         'tag' => 'assigned_websites'
+                    ]
+                ],
+            ]
+        ];
+    } elseif(!Yii::$app->user->isGuest && Yii::$app->user->identity->role_id == $is_designer) {
+        $menuItems[] = [
+            'label' => 'Site Manager',
+            'items' => [
+                [
+                    'label' => 'New Sites For Design',
+                    'url' => [
+                        'website/websites-for-design',
+                        'designer_user_id' => Yii::$app->user->id,
+                        'tag' => 'sites_for_design'
+                    ]
+                ],
+                [
+                    'label' => 'Sites For Update',
+                    'url' => [
+                        'website/websites-for-update',
+                        'designer_user_id' => Yii::$app->user->id,
+                        'tag' => 'sites_for_update'
                     ]
                 ],
             ]

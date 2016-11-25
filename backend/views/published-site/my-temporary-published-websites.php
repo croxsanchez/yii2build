@@ -9,7 +9,7 @@ use kartik\dialog\Dialog;
 /* @var $searchModel backend\models\customer\CustomerRecordSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Websites for Development';
+$this->title = 'My Temporary Published Websites';
 $this->params['breadcrumbs'][] = $this->title;
 
 echo Dialog::widget([
@@ -25,39 +25,57 @@ echo Dialog::widget([
         'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
+            'id',
             [
-                'attribute' => 'id',
-                'label' => 'Website Id',
+                'attribute' => 'website_id',
+                'label' => 'Website ID',
             ],
-            'customer_id',
             [
-                'attribute' => 'customerName',
-                'label' => 'Customer Name',
+                'attribute' => 'websiteDescription',
+                'label' => 'Website Description',
             ],
+            'url',
             [
                 'attribute' => 'domainName',
                 'label' => 'Domain Name',
+            ],
+            [
+                'attribute' => 'themeName',
+                'label' => 'Theme Name',
+            ],
+            [
+                'attribute' => 'customerName',
+                'label' => 'Customer Name',
             ],
             //'paymentStatus',
             [
                 'class' => '\yii\grid\ActionColumn',
                 'header' => 'Action',
-                'controller' => 'website',
+                'controller' => 'published-site',
                 'buttons' => [
-                    'toDesign' => function ($url, $model) {
-                        return Html::a('<span class="glyphicon glyphicon-edit"></span>', $url, [
-                                    'title' => Yii::t('app', 'Send to design'),
-                                    'data-confirm'=>'Are you sure you want to send this website to design?',
+                    'modify' => function ($url, $model) {
+                        return Html::a('<span class="glyphicon glyphicon-pencil"></span>', $url, [
+                                    'title' => Yii::t('app', 'Modify Website'),
+                                    'data-confirm'=>'Are you sure you want to modify this website?',
+                                    'data-method'=>'POST'
+                        ]);
+                    },
+                    'approve' => function ($url, $model) {
+                        return Html::a('<span class="glyphicon glyphicon-ok"></span>', $url, [
+                                    'title' => Yii::t('app', 'Approve Website'),
+                                    'data-confirm'=>'Are you sure you want to approve this website?',
                                     'data-method'=>'POST'
                         ]);
                     },
                 ],
                 'urlCreator' => function ($action, $model, $key, $index) {
-                        if ($action === 'toDesign') {
-                            return Url::toRoute(['send-to-design','id' => $model['id']]);
+                        if ($action === 'modify') {
+                            return Url::toRoute(['modify-website','website_id' => $model['website_id']]);
+                        } elseif ($action === 'approve') {
+                            return Url::toRoute(['approve-website','website_id' => $model['website_id']]);
                         }
                     },
-                'template' => '{toDesign}',
+                'template' => '{modify}{approve}',
             ],
         ],
     ]); ?>

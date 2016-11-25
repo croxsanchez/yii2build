@@ -14,23 +14,15 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'url')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'url_status')->checkbox() ?>
-
-    <?= $form->field($model, 'website_id')->textInput() ?>
-
-    <?= $form->field($model, 'designer_id')->textInput() ?>
-
-    <?= $form->field($model, 'seller_id')->textInput() ?>
-
-    <?= $form->field($model, 'customer_id')->textInput() ?>
-
-    <?= $form->field($model, 'created_at')->textInput() ?>
-
-    <?= $form->field($model, 'created_by')->textInput() ?>
-
-    <?= $form->field($model, 'updated_at')->textInput() ?>
-
-    <?= $form->field($model, 'updated_by')->textInput() ?>
+    <?= $form->field($model, 'url_status')->checkbox()->label('Activate') ?>
+    
+    <?= Html::activeHiddenInput($model, 'website_id', ['value' => $website_id]);?>
+    
+    <?= Html::activeHiddenInput($model, 'designer_id', ['value' => $designer_id]);?>
+    
+    <?= Html::activeHiddenInput($model, 'seller_id', ['value' => $seller_id]);?>
+    
+    <?= Html::activeHiddenInput($model, 'customer_id', ['value' => $customer_id]);?>
 
     <div class="form-group">
         <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>

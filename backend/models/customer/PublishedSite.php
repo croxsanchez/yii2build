@@ -7,9 +7,13 @@ use backend\models\customer\CustomerRecord;
 use backend\models\Designer;
 use backend\models\Seller;
 use common\models\User;
+use yii\behaviors\TimestampBehavior;
+use yii\behaviors\BlameableBehavior;
+use yii\db\Expression;
+use yii\db\ActiveRecord;
 
 /**
- * This is the model class for table "temporary_site".
+ * This is the model class for table "published_site".
  *
  * @property integer $id
  * @property string $url
@@ -30,14 +34,14 @@ use common\models\User;
  * @property User $updatedBy
  * @property Website $website
  */
-class TemporarySite extends \yii\db\ActiveRecord
+class PublishedSite extends \yii\db\ActiveRecord
 {
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
-        return 'temporary_site';
+        return 'published_site';
     }
 
     /**
@@ -77,6 +81,30 @@ class TemporarySite extends \yii\db\ActiveRecord
             'created_by' => 'Created By',
             'updated_at' => 'Updated At',
             'updated_by' => 'Updated By',
+        ];
+    }
+
+    /**
+     * behaviors
+     */
+    public function behaviors()
+    {
+        return [
+            'timestamp' => [
+                'class' => TimestampBehavior::className(),
+                'attributes' => [
+                    ActiveRecord::EVENT_BEFORE_INSERT => ['created_at', 'updated_at'],
+                    ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_at'],
+                ],
+                'value' => new Expression('NOW()'),
+            ],
+            'blame' => [
+                'class' => BlameableBehavior::className(),
+                'attributes' => [
+                    ActiveRecord::EVENT_BEFORE_INSERT => ['created_by', 'updated_by'],
+                    ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_by'],
+                ]
+            ]
         ];
     }
 

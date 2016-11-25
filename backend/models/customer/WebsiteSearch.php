@@ -315,7 +315,7 @@ class WebsiteSearch extends Website
             ->innerJoin('domain', 'domain.id = website.domain_id')
             ->where(['website.created_by' => $params['seller_user_id']])
             ->andWhere(['website.payment_status_value' => 30])
-            ->andwhere(['domain.domain_status_value' => 50])
+            ->andwhere(['domain.domain_status_value' => 70])
             ->all();
 
         $this->load($params);

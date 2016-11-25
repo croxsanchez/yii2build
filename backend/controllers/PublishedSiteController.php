@@ -3,16 +3,19 @@
 namespace backend\controllers;
 
 use Yii;
-use backend\models\customer\TemporarySite;
-use backend\models\customer\TemporarySiteSearch;
+use backend\models\customer\PublishedSite;
+use backend\models\customer\PublishedSiteSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use common\models\PermissionHelpers;
+use backend\models\customer\Website;
+use backend\models\customer\Domain;
 
 /**
- * TemporarySiteController implements the CRUD actions for TemporarySite model.
+ * PublishedSiteController implements the CRUD actions for PublishedSite model.
  */
-class TemporarySiteController extends Controller
+class PublishedSiteController extends Controller
 {
     /**
      * @inheritdoc
@@ -30,12 +33,12 @@ class TemporarySiteController extends Controller
     }
 
     /**
-     * Lists all TemporarySite models.
+     * Lists all Site models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new TemporarySiteSearch();
+        $searchModel = new PublishedSiteSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -45,7 +48,7 @@ class TemporarySiteController extends Controller
     }
 
     /**
-     * Displays a single TemporarySite model.
+     * Displays a single Site model.
      * @param integer $id
      * @return mixed
      */
@@ -57,25 +60,53 @@ class TemporarySiteController extends Controller
     }
 
     /**
-     * Creates a new TemporarySite model.
+     * Creates a new PublishedSite model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate()
+    public function actionCreate($website_id, $designer_id, $seller_id, $customer_id)
     {
-        $model = new TemporarySite();
+        $model = new PublishedSite();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            //return $this->redirect(['view', 'id' => $model->id]);
+            return $this->goBack();
         } else {
             return $this->render('create', [
                 'model' => $model,
+                'website_id'  => $website_id,
+                'designer_id' => $designer_id,
+                'seller_id' => $seller_id,
+                'customer_id' => $customer_id,
             ]);
         }
     }
 
     /**
-     * Updates an existing TemporarySite model.
+     * Creates a new PublishedSite model.
+     * If creation is successful, the browser will be redirected to the 'view' page.
+     * @return mixed
+     */
+    public function actionCreateTemporarySite($website_id, $designer_id, $seller_id, $customer_id)
+    {
+        $model = new PublishedSite();
+
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            //return $this->redirect(['view', 'id' => $model->id]);
+            return $this->goBack();
+        } else {
+            return $this->render('create_temporary_site', [
+                'model' => $model,
+                'website_id'  => $website_id,
+                'designer_id' => $designer_id,
+                'seller_id' => $seller_id,
+                'customer_id' => $customer_id,
+            ]);
+        }
+    }
+
+    /**
+     * Updates an existing Site model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -94,7 +125,7 @@ class TemporarySiteController extends Controller
     }
 
     /**
-     * Deletes an existing TemporarySite model.
+     * Deletes an existing Site model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -107,18 +138,119 @@ class TemporarySiteController extends Controller
     }
 
     /**
-     * Finds the TemporarySite model based on its primary key value.
+     * Displays the list of customers with domains pending for payment
+     * for the current seller.
+     */
+    public function actionListMyTemporaryWebsites($seller_user_id)
+    {
+        if (!Yii::$app->user->isGuest &&
+            PermissionHelpers::requireRole('Seller')
+                    && PermissionHelpers::requireStatus('Active')){
+            $searchModel = new PublishedSiteSearch();
+            $dataProvider = $searchModel->searchMyTemporaryPublishedWebsites(Yii::$app->request->queryParams);
+            $this->storeReturnUrl();
+
+            return $this->render('my-temporary-published-websites', [
+                    'searchModel'  => $searchModel,
+                    'dataProvider' => $dataProvider,
+                ]);
+        } else {
+            throw new NotFoundHttpException('You\'re not allowed to enter this view.');
+        }
+    }
+
+    /**
+     * Displays the list of customers with domains pending for payment
+     * for the current seller.
+     */
+    public function actionListMyPublishedWebsites($seller_user_id)
+    {
+        if (!Yii::$app->user->isGuest &&
+            PermissionHelpers::requireRole('Seller')
+                    && PermissionHelpers::requireStatus('Active')){
+            $searchModel = new PublishedSiteSearch();
+            $dataProvider = $searchModel->searchMyPublishedWebsites(Yii::$app->request->queryParams);
+            $this->storeReturnUrl();
+
+            return $this->render('my-published-websites', [
+                    'searchModel'  => $searchModel,
+                    'dataProvider' => $dataProvider,
+                ]);
+        } else {
+            throw new NotFoundHttpException('You\'re not allowed to enter this view.');
+        }
+    }
+
+    /**
+     * Displays the list of customers with domains pending for payment
+     * for the current seller.
+     */
+    public function actionModifyWebsite($website_id)
+    {
+        if (!Yii::$app->user->isGuest &&
+            PermissionHelpers::requireRole('Seller')
+                    && PermissionHelpers::requireStatus('Active')){
+            $domain_id = Website::findOne($website_id)->domain_id;
+            $domain = Domain::findOne($domain_id);
+
+            if (!empty($domain)){
+                // Assign the 'Update' status to domain_satus_value property
+                $domain->domain_status_value = 50;
+                if ($domain->save()){
+                    return $this->goBack();
+                } else {
+                    throw new NotFoundHttpException('Error modifying the database.');
+                }
+            }
+        } else {
+            throw new NotFoundHttpException('You\'re not allowed to enter this view.');
+        }
+    }
+
+    /**
+     * Displays the list of customers with domains pending for payment
+     * for the current seller.
+     */
+    public function actionApproveWebsite($website_id)
+    {
+        if (!Yii::$app->user->isGuest &&
+            PermissionHelpers::requireRole('Seller')
+                    && PermissionHelpers::requireStatus('Active')){
+            $domain_id = Website::findOne($website_id)->domain_id;
+            $domain = Domain::findOne($domain_id);
+
+            if (!empty($domain)){
+                // Assign the 'Approved' status to domain_satus_value property
+                $domain->domain_status_value = 60;
+                if ($domain->save()){
+                    return $this->goBack();
+                } else {
+                    throw new NotFoundHttpException('Error modifying the database.');
+                }
+            }
+        } else {
+            throw new NotFoundHttpException('You\'re not allowed to enter this view.');
+        }
+    }
+
+    /**
+     * Finds the Site model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return TemporarySite the loaded model
+     * @return Site the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = TemporarySite::findOne($id)) !== null) {
+        if (($model = Site::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+    
+    private function storeReturnUrl()
+    {
+        Yii::$app->user->returnUrl = Yii::$app->request->url;
     }
 }

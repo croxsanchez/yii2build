@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
+use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $searchModel backend\models\customer\CustomerRecordSearch */
@@ -35,7 +36,21 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'class' => 'yii\grid\ActionColumn',
                 'header' => 'Update Info',
-                'template' => '{update}',
+                'buttons' => [
+                    'modify' => function ($url, $model) {
+                        return Html::a('<span class="glyphicon glyphicon-pencil"></span>', $url, [
+                                    'title' => Yii::t('app', 'Modify Website'),
+                                    'data-confirm'=>'Are you sure you want to modify this website?',
+                                    'data-method'=>'POST'
+                        ]);
+                    },
+                ],
+                'urlCreator' => function ($action, $model, $key, $index) {
+                        if ($action === 'modify') {
+                            return Url::toRoute(['published-site/modify-website','website_id' => $model['id']]);
+                        }
+                },
+                'template' => '{modify}',
             ],
         ],
     ]); ?>

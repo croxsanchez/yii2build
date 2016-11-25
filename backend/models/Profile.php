@@ -176,7 +176,7 @@ class Profile extends ActiveRecord
     * @get Email
     */
     public function getEmail(){
-        return User::find()->select('email')->where(['id'=> $this->seller->user_id ])->scalar();
+        return User::findOne(['id'=> $this->seller->user_id ])->email;
     }
     
     /**
@@ -197,7 +197,7 @@ class Profile extends ActiveRecord
     * @get Username
     */
     public function getUsername(){
-        return User::find()->select('username')->where(['id'=> $this->seller->user_id ])->scalar();
+        return User::findOne(['id'=> $this->seller->user_id ])->username;
     }
     
     /**

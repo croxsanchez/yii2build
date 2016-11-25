@@ -313,16 +313,10 @@ class ProfileController extends Controller
     }
     
     private function getSellerId(){
-        return Seller::find()
-                ->select('id')
-                ->where(['user_id' => Yii::$app->user->identity->id])
-                ->scalar();
+        return Seller::findOne(['user_id' => Yii::$app->user->identity->id])->id;
     }
     
     private function getUsername(){
-        return User::find()
-                ->select('username')
-                ->where(['id' => Yii::$app->user->identity->id])
-                ->scalar();
+        return User::findOne(['id' => Yii::$app->user->identity->id])->username;
     }
 }

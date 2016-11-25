@@ -5,11 +5,14 @@ namespace backend\controllers;
 use Yii;
 use backend\models\customer\Website;
 use backend\models\customer\WebsiteSearch;
+use backend\models\customer\CustomerRecord;
+use backend\models\Seller;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use backend\models\customer\Domain;
 use backend\models\DesignerWebsite;
+use backend\models\search\DesignerWebsiteSearch;
 use backend\models\customer\PreDomain;
 use common\models\PermissionHelpers;
 use yii\data\ArrayDataProvider;
@@ -156,28 +159,6 @@ class WebsiteController extends Controller
     }
 
     /**
-     * Displays the list of customers with domains pending for payment
-     * for the current seller.
-     */
-    public function actionWebsitesForDevelopment($seller_user_id)
-    {
-        if (!Yii::$app->user->isGuest &&
-            PermissionHelpers::requireRole('Seller')
-                    && PermissionHelpers::requireStatus('Active')){
-            $searchModel = new WebsiteSearch();
-            $dataProvider = $searchModel->searchMyWebsitesForDevelopment(Yii::$app->request->queryParams);
-            $this->storeReturnUrl();
-
-            return $this->render('websites-for-development', [
-                    'searchModel'  => $searchModel,
-                    'dataProvider' => $dataProvider,
-                ]);
-        } else {
-            throw new NotFoundHttpException('You\'re not allowed to enter this view.');
-        }
-    }
-
-    /**
      * Updates an existing Website model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
@@ -219,6 +200,28 @@ class WebsiteController extends Controller
     }
 
     /**
+     * Displays the list of customers with domains pending for payment
+     * for the current seller.
+     */
+    public function actionWebsitesForDevelopment($seller_user_id)
+    {
+        if (!Yii::$app->user->isGuest &&
+            PermissionHelpers::requireRole('Seller')
+                    && PermissionHelpers::requireStatus('Active')){
+            $searchModel = new WebsiteSearch();
+            $dataProvider = $searchModel->searchMyWebsitesForDevelopment(Yii::$app->request->queryParams);
+            $this->storeReturnUrl();
+
+            return $this->render('websites-for-development', [
+                    'searchModel'  => $searchModel,
+                    'dataProvider' => $dataProvider,
+                ]);
+        } else {
+            throw new NotFoundHttpException('You\'re not allowed to enter this view.');
+        }
+    }
+
+    /**
      * Updates an existing Website model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
@@ -243,6 +246,64 @@ class WebsiteController extends Controller
             }
         } else {
             throw new NotFoundHttpException('You\'re not allowed to perform this action.');
+        }
+    }
+
+    /**
+     * Displays the list of customers with domains pending for payment
+     * for the current seller.
+     */
+    public function actionWebsitesForDesign($designer_user_id)
+    {
+        if (!Yii::$app->user->isGuest &&
+            PermissionHelpers::requireRole('Designer')
+                    && PermissionHelpers::requireStatus('Active')){
+            $searchModel = new DesignerWebsiteSearch();
+            $dataProvider = $searchModel->searchMyWebsitesForDesign(Yii::$app->request->queryParams);
+            $this->storeReturnUrl();
+
+            return $this->render('websites-for-design', [
+                    'searchModel'  => $searchModel,
+                    'dataProvider' => $dataProvider,
+                ]);
+        } else {
+            throw new NotFoundHttpException('You\'re not allowed to enter this view.');
+        }
+    }
+
+    /**
+     * Displays the list of customers with domains pending for payment
+     * for the current seller.
+     */
+    public function actionTemporaryPublish($website_id)
+    {
+        if (!Yii::$app->user->isGuest &&
+            PermissionHelpers::requireRole('Designer')
+                    && PermissionHelpers::requireStatus('Active')){
+            $this->storeReturnUrl();
+            $website = Website::findOne($website_id);
+            $domain = Domain::findOne($website->domain_id);
+            $designer_id = DesignerWebsite::findOne(['website_id'  => $website_id])->designer_id;
+            $seller_user_id = CustomerRecord::findOne(['id' => $website->customer_id])->created_by;
+            $seller_id = Seller::findOne(['user_id' => $seller_user_id])->id;
+            
+            if ($domain){
+                $domain->domain_status_value = 40; // Set Domain's Status to Temporary (published)
+                if($domain->save()){
+                    return $this->redirect(['published-site/create-temporary-site',
+                        'website_id'  => $website_id,
+                        'designer_id'  => $designer_id,
+                        'seller_id' => $seller_id,
+                        'customer_id' => $website->customer_id,
+                    ]);
+                } else {
+                    throw new NotFoundHttpException('Error modifying the database!');
+                }
+            } else {
+                throw new NotFoundHttpException('Domain not found in database!.');
+            }
+        } else {
+            throw new NotFoundHttpException('You\'re not allowed to enter this view.');
         }
     }
 
@@ -300,6 +361,7 @@ class WebsiteController extends Controller
         if (!Yii::$app->user->isGuest &&
             PermissionHelpers::requireRole('Seller')
                     && PermissionHelpers::requireStatus('Active')){
+            $this->storeReturnUrl();
             $searchModel = new WebsiteSearch();
             $dataProvider = $searchModel->searchMyPublishedWebsites(Yii::$app->request->queryParams);
 

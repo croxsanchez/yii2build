@@ -61,4 +61,15 @@ class Designer extends \yii\db\ActiveRecord
     {
         return $this->hasOne(User::className(), ['id' => 'user_id']);
     }
+    
+    public function getFullName()
+    {
+        return implode(', ',
+            array_filter(
+                $this->getAttributes(
+                        ['first_name', 'last_name']
+                )
+            )
+        );
+    }
 }

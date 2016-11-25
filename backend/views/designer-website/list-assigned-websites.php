@@ -24,7 +24,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'label' => 'Website Id',
             ],
             [
-                'attribute' => 'website_description',
+                'attribute' => 'websiteDescription',
                 'label' => 'Website Description',
             ],
             [

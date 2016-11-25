@@ -9,7 +9,7 @@ use kartik\dialog\Dialog;
 /* @var $searchModel backend\models\customer\CustomerRecordSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Websites for Development';
+$this->title = 'New Websites for Design';
 $this->params['breadcrumbs'][] = $this->title;
 
 echo Dialog::widget([
@@ -26,17 +26,16 @@ echo Dialog::widget([
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
             [
-                'attribute' => 'id',
-                'label' => 'Website Id',
-            ],
-            'customer_id',
-            [
-                'attribute' => 'customerName',
-                'label' => 'Customer Name',
+                'attribute' => 'websiteDescription',
+                'label' => 'Website Description',
             ],
             [
                 'attribute' => 'domainName',
                 'label' => 'Domain Name',
+            ],
+            [
+                'attribute' => 'themeName',
+                'label' => 'Theme Name',
             ],
             //'paymentStatus',
             [
@@ -44,20 +43,20 @@ echo Dialog::widget([
                 'header' => 'Action',
                 'controller' => 'website',
                 'buttons' => [
-                    'toDesign' => function ($url, $model) {
-                        return Html::a('<span class="glyphicon glyphicon-edit"></span>', $url, [
-                                    'title' => Yii::t('app', 'Send to design'),
-                                    'data-confirm'=>'Are you sure you want to send this website to design?',
+                    'temporaryPublish' => function ($url, $model) {
+                        return Html::a('<span class="glyphicon glyphicon-hourglass"></span>', $url, [
+                                    'title' => Yii::t('app', 'Temporary Publish Website'),
+                                    'data-confirm'=>'Are you sure you want to temporary publish this website?',
                                     'data-method'=>'POST'
                         ]);
                     },
                 ],
                 'urlCreator' => function ($action, $model, $key, $index) {
-                        if ($action === 'toDesign') {
-                            return Url::toRoute(['send-to-design','id' => $model['id']]);
+                        if ($action === 'temporaryPublish') {
+                            return Url::toRoute(['temporary-publish','website_id' => $model['website_id']]);
                         }
                     },
-                'template' => '{toDesign}',
+                'template' => '{temporaryPublish}',
             ],
         ],
     ]); ?>

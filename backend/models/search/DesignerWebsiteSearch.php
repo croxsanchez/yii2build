@@ -6,15 +6,18 @@ use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use backend\models\DesignerWebsite;
-
+use backend\models\Designer;
+use yii\db\Query;
 /**
  * DesignerWebsiteSearch represents the model behind the search form about `backend\models\DesignerWebsite`.
  */
 class DesignerWebsiteSearch extends DesignerWebsite
 {
     public $designerName;
-    public $website_description;
+    public $designer;
+    public $websiteDescription;
     public $domainName;
+    public $themeName;
 
 
     /**
@@ -75,6 +78,67 @@ class DesignerWebsiteSearch extends DesignerWebsite
         return $dataProvider;
     }
     
+    public function searchMyWebsitesForDesign($params)
+    {
+        $designer_id = Designer::findOne(['user_id' => $params['designer_user_id']])->id;
+
+        $query = DesignerWebsiteSearch::find();
+
+        $dataProvider = (new ActiveDataProvider([
+            'query' => $query,
+            'pagination' => [
+                    'pageSize' => 10,
+                ],
+            ]));
+
+        $dataProvider->setSort([
+            'attributes' => [
+                'customer_id' => [
+                    'asc' => ['customer_id' => SORT_ASC],
+                    'desc' => ['customer_id' => SORT_DESC],
+                    'label' => 'Customer Id'
+                ],
+                'customerName' => [
+                    'asc' => ['customer.name' => SORT_ASC],
+                    'desc' => ['customer.name' => SORT_DESC],
+                    'label' => 'Full Name'
+                ],
+                'domainName' => [
+                    'asc' => ['domain.name' => SORT_ASC],
+                    'desc' => ['domain.name' => SORT_DESC],
+                    'label' => 'Domain Name'
+                ],
+                'themeName' => [
+                    'asc' => ['theme.name' => SORT_ASC],
+                    'desc' => ['theme.name' => SORT_DESC],
+                    'label' => 'Theme Name'
+                ],
+                'websiteDescription' => [
+                    'asc' => ['website.description' => SORT_ASC],
+                    'desc' => ['website.description' => SORT_DESC],
+                    'label' => 'Website Description'
+                ],
+            ]
+        ]);
+
+        $query->select([
+                'website_id', 
+                'website.description AS websiteDescription',
+                'domain.name AS domainName', 
+                'theme.name AS themeName',
+            ])
+            ->innerJoin('website', 'website.id = website_id')
+            ->innerJoin('designer', ['designer.id' => $designer_id])
+            ->innerJoin('domain','domain.id = website.domain_id')
+            ->innerJoin('theme','theme.id = website.theme_id')
+            ->where('domain.domain_status_value=30')
+            ->all();
+
+        $this->load($params);
+
+        return $dataProvider;
+    }
+    
     public function searchAssignedWebsites($params)
     {
         $query = DesignerWebsiteSearch::find();
@@ -93,7 +157,7 @@ class DesignerWebsiteSearch extends DesignerWebsite
                     'desc' => ['website_id' => SORT_DESC],
                     'label' => 'Id'
                 ],
-                'website_description' => [
+                'websiteDescription' => [
                     'asc' => ['website.description' => SORT_ASC],
                     'desc' => ['website.description' => SORT_DESC],
                     'label' => 'Website Description'
@@ -111,20 +175,16 @@ class DesignerWebsiteSearch extends DesignerWebsite
             ]
         ]);
 
-
-        /*$subQuery = (new Query())->select('name')
-                                ->from('domain_status')
-                                ->where(['value' => 20]);*/
         $query->select([
                 'website_id', 
-                'website.description AS website_description',
+                'website.description AS websiteDescription',
                 'domain.name AS domainName', 
-                'designer.first_name AS designerName', 
+                'CONCAT  (first_name, \' \', last_name) AS "designerName"', 
             ])
             ->innerJoin('website', 'website.id = website_id')
             ->innerJoin('designer','designer.id = designer_id')
             ->innerJoin('domain','domain.id = website.domain_id')
-            ->where(['or','domain.domain_status_value=20', 'domain.domain_status_value=30'])
+            ->where('domain.domain_status_value=30')
             ->all();
 
         $this->load($params);
