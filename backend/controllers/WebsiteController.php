@@ -232,8 +232,8 @@ class WebsiteController extends Controller
         if (!Yii::$app->user->isGuest &&
             PermissionHelpers::requireRole('Seller')
                     && PermissionHelpers::requireStatus('Active')){
-            $model = $this->findModel($id);
-            $domain = Domain::findOne(['id' => $model->domain_id]);
+            $domain_id = $this->findModel($id)->domain_id;
+            $domain = Domain::findOne(['id' => $domain_id]);
 
             if (!empty($domain)){
                 // Assign the 'Design' status to domain_satus_value property
@@ -258,6 +258,7 @@ class WebsiteController extends Controller
         if (!Yii::$app->user->isGuest &&
             PermissionHelpers::requireRole('Designer')
                     && PermissionHelpers::requireStatus('Active')){
+            // Find Designer, Website and Domain info
             $searchModel = new DesignerWebsiteSearch();
             $dataProvider = $searchModel->searchMyWebsitesForDesign(Yii::$app->request->queryParams);
             $this->storeReturnUrl();

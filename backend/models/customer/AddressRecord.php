@@ -37,7 +37,6 @@ class AddressRecord extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['customer_id'], 'required'],
             [['customer_id'], 'integer'],
             [['purpose', 'country', 'state', 'city', 'street', 'building', 'apartment', 'receiver_name', 'postal_code'], 'string', 'max' => 255],
             [['customer_id'], 'exist', 'skipOnError' => true, 'targetClass' => CustomerRecord::className(), 'targetAttribute' => ['customer_id' => 'id']],
@@ -61,6 +60,7 @@ class AddressRecord extends \yii\db\ActiveRecord
             'receiver_name' => 'Receiver Name',
             'postal_code' => 'Postal Code',
             'customer_id' => 'Customer ID',
+            'fullAddress' => 'Address',
         ];
     }
 
@@ -77,7 +77,6 @@ class AddressRecord extends \yii\db\ActiveRecord
         return implode(', ',
         array_filter(
         $this->getAttributes(
-                ['country', 'state', 'city', 'street',
-                    'building', 'apartment'])));
+                ['street','building', 'apartment'])));
     }
 }

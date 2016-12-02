@@ -44,8 +44,15 @@ echo Dialog::widget([
                 'header' => 'Action',
                 'controller' => 'website',
                 'buttons' => [
-                    'toDesign' => function ($url, $model) {
+                    'modify' => function ($url, $model) {
                         return Html::a('<span class="glyphicon glyphicon-edit"></span>', $url, [
+                                    'title' => Yii::t('app', 'Modify Website'),
+                                    'data-confirm'=>'Are you sure you want to modify this website?',
+                                    'data-method'=>'POST'
+                        ]);
+                    },
+                    'toDesign' => function ($url, $model) {
+                        return Html::a('<span class="glyphicon glyphicon-share"></span>', $url, [
                                     'title' => Yii::t('app', 'Send to design'),
                                     'data-confirm'=>'Are you sure you want to send this website to design?',
                                     'data-method'=>'POST'
@@ -55,9 +62,11 @@ echo Dialog::widget([
                 'urlCreator' => function ($action, $model, $key, $index) {
                         if ($action === 'toDesign') {
                             return Url::toRoute(['send-to-design','id' => $model['id']]);
+                        } elseif ($action === 'modify') {
+                            return Url::toRoute(['websites-for-development','seller_user_id' => Yii::$app->user->id]);
                         }
                     },
-                'template' => '{toDesign}',
+                'template' => '{modify} {toDesign}',
             ],
         ],
     ]); ?>

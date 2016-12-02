@@ -1,8 +1,11 @@
 <?php
 
 use yii\helpers\Html;
-use yii\grid\GridView;
-
+//use yii\grid\GridView;
+use kartik\grid\GridView;
+use backend\models\customer\WebsiteSearch;
+use backend\models\customer\AddressRecord;
+use yii\data\ActiveDataProvider;
 /* @var $this yii\web\View */
 /* @var $searchModel backend\models\customer\CustomerRecordSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -27,15 +30,25 @@ $this->params['breadcrumbs'][] = $this->title;
                 'format' => ['date', 'dd-MM-Y'],
             ],
             [
-                'attribute' => 'country',
-                'label' => 'Addresses',
-                'format' => 'paragraphs',
-                'value' => function ($model) {
-                    $result = '';
-                    foreach ($model->addresses as $address) {
-                        $result .= $address->fullAddress . "\n\n";
-                    }
-                    return $result;
+                'class' => 'kartik\grid\ExpandRowColumn',
+                'header' => 'Addresses<span class="glyphicon glyphicon-expand"></span>',
+                'value' => function ($model, $key, $index, $column) {
+                    return GridView::ROW_COLLAPSED;
+                },
+                'detail' => function ($model, $key, $index, $column) {
+                    $query = AddressRecord::find();
+                    $query->where(['customer_id' => $model->id]);
+                    $dataProvider = new ActiveDataProvider([
+                        'query' => $query,
+                    ]);
+                    $dataProvider->sort->attributes['fullAddress'] = [
+                        'asc' => ['street' => SORT_ASC],
+                        'desc' => ['street' => SORT_DESC]
+                    ];
+                    
+                    return Yii::$app->controller->renderPartial('_addresses',[
+                       'dataProvider' => $dataProvider,
+                    ]);
                 }
             ],
             [
@@ -63,15 +76,20 @@ $this->params['breadcrumbs'][] = $this->title;
                 }
             ],
             [
-                'attribute' => 'website',
-                'label' => 'Websites',
-                'format' => 'paragraphs',
-                'value' => function ($model) {
-                    $result = '';
-                    foreach ($model->websites as $website) {
-                        $result .= $website->fullWebsite . "\n\n";
-                    }
-                    return $result;
+                'class' => 'kartik\grid\ExpandRowColumn',
+                'header' => 'Websites<span class="glyphicon glyphicon-expand"></span>',
+                'value' => function ($model, $key, $index, $column) {
+                    return GridView::ROW_COLLAPSED;
+                },
+                'detail' => function ($model, $key, $index, $column) {
+                    $searchModel = new WebsiteSearch();
+                    $searchModel->customer_id = $model->id;
+                    $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+                    
+                    return Yii::$app->controller->renderPartial('_websites',[
+                       'searchModel' => $searchModel,
+                       'dataProvider' => $dataProvider,
+                    ]);
                 }
             ],
             'customer_type_id',

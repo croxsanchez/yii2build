@@ -102,19 +102,6 @@ class WebsiteSearch extends Website
         //$query = WebsiteSearch::find();
         $query = new Query();
         
-        /*$dataProvider = new SqlDataProvider([
-            'sql' => 'SELECT website.id AS id, customer.id AS customer_id, customer.name AS customerName, description, pre_domain.name, domain_choice.order, (SELECT name FROM payment_status WHERE value=10) AS paymentStatus 
-                    FROM website
-                    INNER JOIN pre_domain
-                    ON pre_domain.website_id = website.id
-                    INNER JOIN domain_choice
-                    ON domain_choice.value = pre_domain.domain_choice_value
-                    INNER JOIN customer 
-                    ON customer.id = website.customer_id
-                    WHERE website.payment_status_value = :value',
-            'params' => [':value' => 10],
-        ]);*/
-        
         $dataProvider = (new ActiveDataProvider([
             'query' => $query,
             'pagination' => [
@@ -139,16 +126,6 @@ class WebsiteSearch extends Website
                     'desc' => ['customer.name' => SORT_DESC],
                     'label' => 'Full Name'
                 ],
-                'name' => [
-                    'asc' => ['pre_domain.name' => SORT_ASC],
-                    'desc' => ['pre_domain.name' => SORT_DESC],
-                    'label' => 'Domain Name'
-                ],
-                'pre_domain.domainChoiceOrder' => [
-                    'asc' => ['pre_domain.domain_choice_value' => SORT_ASC],
-                    'desc' => ['pre_domain.domain_choice_value' => SORT_DESC],
-                    'label' => 'Domain Name Preference'
-                ],
                 'paymentStatus' => [
                     'asc' => ['website.payment_status_value' => SORT_ASC],
                     'desc' => ['website.payment_status_value' => SORT_DESC],
@@ -172,10 +149,8 @@ class WebsiteSearch extends Website
                                 ->from('payment_status')
                                 ->where(['value' => 10]);
         
-        $query->select(['website.id AS id', 'website.customer_id', 'customer.name AS customerName', 'website.description','pre_domain.name','domain_choice.order AS domainChoiceOrder' ,'paymentStatus' => $subQuery, 'online_store', 'social_media'])
+        $query->select(['website.id AS id', 'website.customer_id', 'customer.name AS customerName', 'website.description','paymentStatus' => $subQuery, 'online_store', 'social_media'])
             ->from('website')
-            ->innerJoin('pre_domain', 'pre_domain.website_id = website.id')
-            ->innerJoin('domain_choice','pre_domain.domain_choice_value = domain_choice.value')
             ->innerjoin('customer', 'website.customer_id = customer.id')
             ->where(['website.payment_status_value' => 10])
             ->orderBy('website.id')

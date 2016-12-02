@@ -14,6 +14,7 @@ use common\models\RecordHelpers;
 use yii\web\UploadedFile;
 use common\models\User;
 use backend\models\Seller;
+use backend\models\Model;
 
 Yii::$app->params['uploadPath'] = Yii::$app->basePath . '/web/uploads/';
 Yii::$app->params['uploadUrl'] = Yii::$app->urlManager->baseUrl . '/web/uploads/';

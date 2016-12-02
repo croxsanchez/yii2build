@@ -29,7 +29,14 @@
 	"limion/yii2-jquery-fileupload-widget": "~1.0",
         "kartik-v/yii2-widget-fileinput": "*",
 	"kartik-v/yii2-widget-datepicker": "*",
-	"kartik-v/yii2-dialog": "*"
+	"kartik-v/yii2-dialog": "*",
+	"kartik-v/yii2-widget-select2": "@dev",
+	"wbraganca/yii2-dynamicform": "dev-master",
+	"kartik-v/yii2-grid": "@dev",
+	"kartik-v/yii2-krajee-base": "dev-master",
+	"philippfrenzel/yii2fullcalendar":"*",
+	"kartik-v/yii2-mpdf": "dev-master",
+	"kartik-v/yii2-editable": "*"
     },
     "require-dev": {
         "yiisoft/yii2-codeception": "*",

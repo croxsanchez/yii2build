@@ -6,6 +6,7 @@ use yii\widgets\ActiveForm;
 use kartik\date\DatePicker;
 //use kartik\file\FileInput;
 use limion\jqueryfileupload\JQueryFileUpload;
+use wbraganca\dynamicform\DynamicFormWidget;
 
 /* @var $this yii\web\View */
 /* @var $model frontend\models\Profile */
@@ -15,10 +16,10 @@ use limion\jqueryfileupload\JQueryFileUpload;
 <?php
     if (!isset($model->avatar)){
         echo \cebe\gravatar\Gravatar::widget([
-            'email' => common\models\User::find()->where(['id'=>Yii::$app->user->getId()])->one()->email,
+            'email' => common\models\User::find(['id'=>Yii::$app->user->getId()])->email,
             'options' => [
                 'class'=>'profile-image',
-                'alt' => common\models\User::find()->where(['id'=>Yii::$app->user->getId()])->one()->username,
+                'alt' => common\models\User::find(['id'=>Yii::$app->user->getId()])->one()->username,
                 ],
             'size' => 128,
             ]);
@@ -51,6 +52,7 @@ use limion\jqueryfileupload\JQueryFileUpload;
   <div class="tab-pane active vertical-pad" id="personal">
 
     <?php $form = ActiveForm::begin([
+        'id' => 'dynamic-form',
         'options'=>['enctype'=>'multipart/form-data'] // important
     ]); ?>
     

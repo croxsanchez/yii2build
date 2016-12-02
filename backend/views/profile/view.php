@@ -98,12 +98,18 @@ $show_this_for_seller = PermissionHelpers::requireRole('Seller');
             'pagination' => false
         ]),
         'columns' => [
-            'number',
             'purpose',
+            'number',
         ]
     ]);?>
     
     <h2>Addresses</h2>
+    <?php
+        $dataProvider->sort->attribute['street']  = [
+                        'asc' => ['street' => SORT_ASC],
+                        'desc' => ['street' => SORT_DESC]
+                    ];
+    ?>
     <?= \yii\grid\GridView::widget([
         'dataProvider' => new \yii\data\ActiveDataProvider(
                 [
@@ -112,17 +118,20 @@ $show_this_for_seller = PermissionHelpers::requireRole('Seller');
                 ]
         ),
         'columns' => [
+            'purpose',
+            'country',
+            'state',
+            'city',
             [
+                'attribute' => 'street',
                 'label' => 'Address',
                 'value' => function ($model) {
                     return implode(', ',
                         array_filter(
                             $model->getAttributes(
-                                ['country', 'state', 'city', 'street',
-                                    'building', 'apartment'])));
+                                ['street', 'building', 'apartment'])));
                 }
             ],
-            'purpose',
         ],
     ]);?>
     

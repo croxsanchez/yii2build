@@ -30,7 +30,6 @@ class EmailRecord extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['customer_id'], 'required'],
             [['customer_id'], 'integer'],
             [['purpose', 'address'], 'string', 'max' => 255],
             [['customer_id'], 'exist', 'skipOnError' => true, 'targetClass' => CustomerRecord::className(), 'targetAttribute' => ['customer_id' => 'id']],

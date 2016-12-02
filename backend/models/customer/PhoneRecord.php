@@ -15,7 +15,7 @@ class PhoneRecord extends ActiveRecord
         return [
             ['customer_id', 'number'],
             ['number', 'string'],
-            [['customer_id', 'number'], 'required'],
+            [['number','purpose'], 'required'],
         ];
     }
     
@@ -24,6 +24,6 @@ class PhoneRecord extends ActiveRecord
         return implode(', ',
         array_filter(
         $this->getAttributes(
-                ['number'])));
+                ['purpose','number'])));
     }
 }

@@ -75,7 +75,7 @@ echo Dialog::widget([
                             return Url::toRoute(['approve-website','website_id' => $model['website_id']]);
                         }
                     },
-                'template' => '{modify}{approve}',
+                'template' => '{modify} {approve}',
             ],
         ],
     ]); ?>
